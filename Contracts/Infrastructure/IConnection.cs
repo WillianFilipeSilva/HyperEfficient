@@ -1,6 +1,6 @@
 using MySqlConnector;
 
-namespace MinhaHyperEfficient.Contracts.Infrastructure
+namespace HyperEfficient.Contracts.Infrastructure
 {
     public interface IConnection
     {

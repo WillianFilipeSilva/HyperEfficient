@@ -1,10 +1,9 @@
 using AutoMapper;
 using HyperEfficient.Contracts.Repository;
 using HyperEfficient.Contracts.Service;
-using HyperEfficient.DTO;
+using HyperEfficient.DTOs.Categoria;
+using HyperEfficient.DTOs.MessageResponse;
 using HyperEfficient.Entity;
-using HyperEfficient.Response;
-using HyperEfficient.Response.MessageResponse;
 
 namespace HyperEfficient.Services
 {
