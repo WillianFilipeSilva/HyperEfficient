@@ -1,0 +1,57 @@
+DROP SCHEMA IF EXISTS `hyperefficient`;
+CREATE SCHEMA `hyperefficient` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `hyperefficient`;
+
+CREATE TABLE `Categoria` (
+  `Id`        INT NOT NULL AUTO_INCREMENT,
+  `Nome`      VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB;
+
+CREATE TABLE `Setor` (
+  `Id`          INT NOT NULL AUTO_INCREMENT,
+  `GastoGeral`  DECIMAL(10,2) NULL,
+  `NomeSetor`   VARCHAR(45)   NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB;
+
+CREATE TABLE `Equipamento` (
+  `Id`          INT NOT NULL AUTO_INCREMENT,
+  `Nome`        VARCHAR(100) NOT NULL,
+  `Descricao`   VARCHAR(300) NULL,
+  `Gastokwh`    DECIMAL(10,2) NOT NULL,
+  `CategoriaId` INT NOT NULL,
+  `SetorId`     INT NOT NULL,
+  `Ativo`       TINYINT NOT NULL DEFAULT 1,
+  PRIMARY KEY (`Id`),
+  INDEX `idx_Equipamento_Categoria` (`CategoriaId`),
+  INDEX `idx_Equipamento_Setor`     (`SetorId`),
+  CONSTRAINT `fk_Equipamento_Categoria`
+      FOREIGN KEY (`CategoriaId`) REFERENCES `Categoria` (`Id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Equipamento_Setor`
+      FOREIGN KEY (`SetorId`)     REFERENCES `Setor`     (`Id`)
+      ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE `Registro` (
+  `Id`            INT NOT NULL AUTO_INCREMENT,
+  `DataInicial`   DATETIME NOT NULL,
+  `DataFinal`     DATETIME NULL,
+  `EquipamentoId` INT NOT NULL,
+  PRIMARY KEY (`Id`),
+  INDEX `idx_Registro_Equipamento` (`EquipamentoId`),
+  CONSTRAINT `fk_Registro_Equipamento`
+      FOREIGN KEY (`EquipamentoId`) REFERENCES `Equipamento` (`Id`)
+      ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE `Usuario` (
+  `Id`       INT NOT NULL AUTO_INCREMENT,
+  `Nome`     VARCHAR(30)  NOT NULL,
+  `CriadoEm` DATETIME     NOT NULL,
+  `Senha`    VARCHAR(255) NULL,
+  `Email`    VARCHAR(150) NULL,
+  `Ativo`    TINYINT      NOT NULL DEFAULT 1,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB;
