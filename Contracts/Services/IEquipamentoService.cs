@@ -1,6 +1,6 @@
 using HyperEfficient.DTOs.Equipamento;
 using HyperEfficient.DTOs.MessageResponse;
-using HyperEfficient.Entity;
+using HyperEfficient.Entities;
 
 namespace HyperEfficient.Contracts.Service
 {

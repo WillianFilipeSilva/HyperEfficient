@@ -1,4 +1,4 @@
-namespace HyperEfficient.Entity
+namespace HyperEfficient.Entities
 {
     public class CategoriaEntity
     {

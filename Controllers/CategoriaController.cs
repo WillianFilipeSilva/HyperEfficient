@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
 using HyperEfficient.Contracts.Service;
-using HyperEfficient.Entity;
 using HyperEfficient.DTOs.Categoria;
 using HyperEfficient.DTOs.Equipamento;
 using HyperEfficient.DTOs.MessageResponse;
+using HyperEfficient.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HyperEfficient.Controllers
 {

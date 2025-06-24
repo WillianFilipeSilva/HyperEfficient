@@ -1,5 +1,5 @@
 using HyperEfficient.DTOs.Base;
-using HyperEfficient.Entity;
+using HyperEfficient.Entities;
 
 namespace HyperEfficient.DTOs.Categoria
 {
