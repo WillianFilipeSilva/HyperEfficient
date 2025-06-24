@@ -1,4 +1,4 @@
-using HyperEfficient.Contracts.Service;
+using HyperEfficient.Contracts.Services;
 using HyperEfficient.DTOs.Categoria;
 using HyperEfficient.DTOs.Equipamento;
 using HyperEfficient.DTOs.MessageResponse;

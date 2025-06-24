@@ -1,4 +1,4 @@
-﻿using HyperEfficient.Entity;
+﻿using HyperEfficient.Entities;
 
 namespace HyperEfficient.Contracts.Infrastructure
 {

@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using HyperEfficient.Contracts.Infrastructure;
-using HyperEfficient.Entity;
+using HyperEfficient.Entities;
 using Microsoft.IdentityModel.Tokens;
 
 namespace HyperEfficient.Infrastructure.Autentication

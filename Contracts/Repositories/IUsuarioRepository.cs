@@ -1,5 +1,5 @@
 using HyperEfficient.Contracts.Repository.Base;
-using HyperEfficient.Entity;
+using HyperEfficient.Entities;
 
 namespace HyperEfficient.Contracts.Repositories
 {

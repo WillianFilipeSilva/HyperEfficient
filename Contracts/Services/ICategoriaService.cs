@@ -2,7 +2,7 @@ using HyperEfficient.DTOs.Categoria;
 using HyperEfficient.DTOs.MessageResponse;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Contracts.Service
+namespace HyperEfficient.Contracts.Services
 {
     public interface ICategoriaService
     {

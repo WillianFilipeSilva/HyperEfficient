@@ -1,6 +1,6 @@
 using AutoMapper;
-using HyperEfficient.Contracts.Repository;
-using HyperEfficient.Contracts.Service;
+using HyperEfficient.Contracts.Repositories;
+using HyperEfficient.Contracts.Services;
 using HyperEfficient.DTOs.Categoria;
 using HyperEfficient.DTOs.MessageResponse;
 using HyperEfficient.Entities;

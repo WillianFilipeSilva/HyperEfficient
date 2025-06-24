@@ -4,7 +4,7 @@ using HyperEfficient.Contracts.Repositories;
 using HyperEfficient.Contracts.Service;
 using HyperEfficient.DTOs.MessageResponse;
 using HyperEfficient.DTOs.Usuario;
-using HyperEfficient.Entity;
+using HyperEfficient.Entities;
 using static HyperEfficient.Infrastructure.Criptografia.Criptografia;
 
 namespace HyperEfficient.Services

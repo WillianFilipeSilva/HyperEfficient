@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using HyperEfficient.DTOs.Usuario;
-using HyperEfficient.Entity;
+using HyperEfficient.Entities;
 
 namespace HyperEfficient.Infrastructure.Mapping;
 
