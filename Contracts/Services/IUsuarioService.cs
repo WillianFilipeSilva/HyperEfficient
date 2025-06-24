@@ -11,5 +11,7 @@ namespace HyperEfficient.Contracts.Service
         Task<MessageResponse> Delete(int id);
         Task<UsuarioGetAllResponse> GetAll();
         Task<UsuarioEntity> GetById(int id);
+        Task<UsuarioLoginTokenDTO> Login(UsuarioLoginDTO Usuario);
+
     }
 }

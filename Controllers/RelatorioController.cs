@@ -8,29 +8,29 @@ namespace HyperEfficient.Controllers
     [Route("relatorios")]
     public class RelatoriosController : ControllerBase
     {
-        private readonly IRelatorioService _service;
+        private readonly IRelatorioService _relatorioService;
 
-        public RelatoriosController(IRelatorioService service)
+        public RelatoriosController(IRelatorioService relatorioService)
         {
-            _service = service;
+            _relatorioService = relatorioService;
         }
 
         [HttpGet("empresa")]
         public async Task<ActionResult<RelatorioEmpresaResponse>> Empresa([FromQuery] DateTime dataInicio, [FromQuery] DateTime dataFim)
         {
-            return Ok(await _service.GetRelatorioEmpresa(dataInicio, dataFim));
+            return Ok(await _relatorioService.GetRelatorioEmpresa(dataInicio, dataFim));
         }
 
         [HttpGet("setor/{setorId}")]
         public async Task<ActionResult<RelatorioSetorResponse>> Setor(int setorId, [FromQuery] DateTime dataInicio, [FromQuery] DateTime dataFim)
         {
-            return Ok(await _service.GetRelatorioSetor(setorId, dataInicio, dataFim));
+            return Ok(await _relatorioService.GetRelatorioSetor(setorId, dataInicio, dataFim));
         }
 
         [HttpGet("equipamento/{equipamentoId}")]
         public async Task<ActionResult<RelatorioEquipamentoResponse>> Equipamento(int equipamentoId, [FromQuery] DateTime dataInicio, [FromQuery] DateTime dataFim)
         {
-            return Ok(await _service.GetRelatorioEquipamento(equipamentoId, dataInicio, dataFim));
+            return Ok(await _relatorioService.GetRelatorioEquipamento(equipamentoId, dataInicio, dataFim));
         }
     }
 }

@@ -11,41 +11,41 @@ namespace HyperEfficient.Controllers
     [Route("categorias")]
     public class CategoriaController : ControllerBase
     {
-        private readonly ICategoriaService _service;
+        private readonly ICategoriaService _categoriaService;
 
-        public CategoriaController(ICategoriaService service)
+        public CategoriaController(ICategoriaService categoriaService)
         {
-            _service = service;
+            _categoriaService = categoriaService;
         }
 
         [HttpPost]
         public async Task<ActionResult<MessageResponse>> InsertCategoria(CategoriaInsertDTO categoria)
         {
-            return Ok(await _service.Insert(categoria));
+            return Ok(await _categoriaService.Insert(categoria));
         }
 
         [HttpPut]
         public async Task<ActionResult<MessageResponse>> UpdateCategoria(CategoriaEntity nome)
         {
-            return Ok(await _service.Update(nome));
+            return Ok(await _categoriaService.Update(nome));
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<MessageResponse>> DeleteCategoria(int id)
         {
-            return Ok(await _service.Delete(id));
+            return Ok(await _categoriaService.Delete(id));
         }
 
         [HttpGet]
         public async Task<ActionResult<EquipamentoGetAllResponse>> GetAllCategorias()
         {
-            return Ok(await _service.GetAll());
+            return Ok(await _categoriaService.GetAll());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<CategoriaEntity>> GetCategoriaById(int id)
         {
-            return Ok(await _service.GetById(id));
+            return Ok(await _categoriaService.GetById(id));
         }
     }
 }

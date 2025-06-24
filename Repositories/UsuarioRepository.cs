@@ -1,6 +1,6 @@
-using HyperEfficient.Contracts.Repository;
 using HyperEfficient.Entity;
 using HyperEfficient.Contracts.Infrastructure;
+using HyperEfficient.Contracts.Repositories;
 
 namespace HyperEfficient.Repositories
 {
@@ -60,7 +60,7 @@ namespace HyperEfficient.Repositories
             return await _connection.ExecuteQueryAsync<UsuarioEntity>(sql);
         }
 
-        public async Task<UsuarioEntity> GetById(int id)
+        public async Task<UsuarioEntity?> GetById(int id)
         {
             string sql = $@"
                      SELECT ID AS {nameof(UsuarioEntity.Id)},
@@ -73,6 +73,21 @@ namespace HyperEfficient.Repositories
                      WHERE ID = @id";
 
             return await _connection.ExecuteQueryFirstAsync<UsuarioEntity>(sql, new { id });
+        }
+
+        public async Task<UsuarioEntity?> GetByEmail(string email)
+        {
+            string sql = $@"
+        SELECT ID       AS {nameof(UsuarioEntity.Id)},
+               NOME     AS {nameof(UsuarioEntity.Nome)},
+               CRIADOEM AS {nameof(UsuarioEntity.CriadoEm)},
+               SENHA    AS {nameof(UsuarioEntity.Senha)},
+               EMAIL    AS {nameof(UsuarioEntity.Email)},
+               ATIVO    AS {nameof(UsuarioEntity.Ativo)}
+        FROM USUARIO
+        WHERE EMAIL = @email";
+
+            return await _connection.ExecuteQueryFirstAsync<UsuarioEntity>(sql, new { email });
         }
     }
 }
