@@ -1,21 +1,21 @@
-﻿using HyperEfficient.Contracts.Service;
-using HyperEfficient.DTOs.Relatorios;
-using HyperEfficient.Contracts.Infrastructure;
+﻿using HyperEfficient.Contracts.Infrastructure;
+using HyperEfficient.Contracts.Service;
+using HyperEfficient.Dtos.Relatorios;
 
-namespace HyperEfficient.Services
+namespace HyperEfficient.Services;
+
+public class RelatorioService : IRelatorioService
 {
-    public class RelatorioService : IRelatorioService
+    private readonly IConnection _connection;
+
+    public RelatorioService(IConnection connection)
     {
-        private readonly IConnection _connection;
+        _connection = connection;
+    }
 
-        public RelatorioService(IConnection connection)
-        {
-            _connection = connection;
-        }
-
-        public async Task<RelatorioEmpresaResponse> GetRelatorioEmpresa(DateTime dataInicio, DateTime dataFim)
-        {
-            const string sql = @"SELECT
+    public async Task<RelatorioEmpresaResponse> GetRelatorioEmpresa(DateTime dataInicio, DateTime dataFim)
+    {
+        const string sql = @"SELECT
                    COUNT(DISTINCT s.Id) QuantidadeSetores,
                    COUNT(DISTINCT e.Id) QuantidadeEquipamentos,
                    SUM(TIMESTAMPDIFF(SECOND, r.DataInicial, IFNULL(r.DataFinal,NOW())))/3600 TempoUsoTotal,
@@ -25,14 +25,17 @@ namespace HyperEfficient.Services
                JOIN Setor s ON s.Id = e.SetorId
                WHERE r.DataInicial >= @dataInicio AND IFNULL(r.DataFinal,NOW()) <= @dataFim";
 
-            return await _connection.ExecuteQueryFirstAsync<RelatorioEmpresaResponse>(sql, new { dataInicio, dataFim });
-        }
+        var result = await _connection.ExecuteQueryFirstAsync<RelatorioEmpresaResponse>(sql, new { dataInicio, dataFim });
+        if (result == null)
+            throw new KeyNotFoundException("Relatório da empresa não encontrado!");
+        return result;
+    }
 
-        public async Task<RelatorioSetorResponse> GetRelatorioSetor(int setorId, DateTime dataInicio, DateTime dataFim)
-        {
-            const string sql = @"SELECT
+    public async Task<RelatorioSetorResponse> GetRelatorioSetor(int setorId, DateTime dataInicio, DateTime dataFim)
+    {
+        const string sql = @"SELECT
                    s.Id SetorId,
-                   s.NomeSetor,
+                   s.Nome,
                    COUNT(DISTINCT e.Id) QuantidadeEquipamentos,
                    SUM(TIMESTAMPDIFF(SECOND, r.DataInicial, IFNULL(r.DataFinal,NOW())))/3600 TempoUsoTotal,
                    SUM((TIMESTAMPDIFF(SECOND, r.DataInicial, IFNULL(r.DataFinal,NOW())))/3600 * e.Gastokwh) GastoEnergeticoTotal
@@ -40,14 +43,18 @@ namespace HyperEfficient.Services
                 JOIN Equipamento e ON e.SetorId = s.Id
                 JOIN Registro r ON r.EquipamentoId = e.Id
                 WHERE s.Id = @setorId AND r.DataInicial >= @dataInicio AND IFNULL(r.DataFinal,NOW()) <= @dataFim
-                GROUP BY s.Id, s.NomeSetor";
+                GROUP BY s.Id, s.Nome";
 
-            return await _connection.ExecuteQueryFirstAsync<RelatorioSetorResponse>(sql, new { setorId, dataInicio, dataFim });
-        }
+        var result = await _connection.ExecuteQueryFirstAsync<RelatorioSetorResponse>(sql,
+            new { setorId, dataInicio, dataFim });
+        if (result == null)
+            throw new KeyNotFoundException("Relatório do setor não encontrado!");
+        return result;
+    }
 
-        public async Task<RelatorioEquipamentoResponse> GetRelatorioEquipamento(int equipamentoId, DateTime dataInicio, DateTime dataFim)
-        {
-            const string sql = @"SELECT
+    public async Task<RelatorioEquipamentoResponse> GetRelatorioEquipamento(int equipamentoId, DateTime dataInicio, DateTime dataFim)
+    {
+        const string sql = @"SELECT
                    e.Id EquipamentoId,
                    e.Nome NomeEquipamento,
                    SUM(TIMESTAMPDIFF(SECOND, r.DataInicial, IFNULL(r.DataFinal,NOW())))/3600 TempoUsoTotal,
@@ -58,7 +65,10 @@ namespace HyperEfficient.Services
                 WHERE e.Id = @equipamentoId AND r.DataInicial >= @dataInicio AND IFNULL(r.DataFinal,NOW()) <= @dataFim
                 GROUP BY e.Id, e.Nome, e.Ativo";
 
-            return await _connection.ExecuteQueryFirstAsync<RelatorioEquipamentoResponse>(sql, new { equipamentoId, dataInicio, dataFim });
-        }
+        var result = await _connection.ExecuteQueryFirstAsync<RelatorioEquipamentoResponse>(sql,
+            new { equipamentoId, dataInicio, dataFim });
+        if (result == null)
+            throw new KeyNotFoundException("Relatório do equipamento não encontrado!");
+        return result;
     }
 }

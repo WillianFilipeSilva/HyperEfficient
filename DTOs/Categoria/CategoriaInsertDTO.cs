@@ -1,7 +1,9 @@
-namespace HyperEfficient.DTOs.Categoria
+using System.ComponentModel.DataAnnotations;
+
+namespace HyperEfficient.Dtos.Categoria;
+
+public class CategoriaInsertDto
 {
-    public class CategoriaInsertDTO
-    {
-        public string Nome { get; set; }
-    }
+    [Required] [StringLength(100)]
+    public string Nome { get; set; }
 }

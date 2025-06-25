@@ -1,14 +1,15 @@
-using System.Text;
-using HyperEfficient.Infrastructure;
+using HyperEfficient.Contracts.Infrastructure;
+using HyperEfficient.Contracts.Service;
+using HyperEfficient.Infrastructure.Autentication;
+using HyperEfficient.Infrastructure.Connection;
 using HyperEfficient.Infrastructure.Extensions;
 using HyperEfficient.Infrastructure.Middleware;
-using HyperEfficient.Contracts.Service;
 using HyperEfficient.Services;
-using Microsoft.OpenApi.Models;
-using HyperEfficient.Contracts.Infrastructure;
-using HyperEfficient.Infrastructure.Autentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
+using static HyperEfficient.Infrastructure.DatabaseInitializer.DatabaseInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header usando o esquema Bearer. Ex: \"Authorization: Bearer {token}\"",
         Name = "Authorization",
@@ -33,7 +34,7 @@ builder.Services.AddSwaggerGen(c =>
         In = ParameterLocation.Header
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -66,6 +67,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Connection (lê a ConnectionString em appsettings.json)
 builder.Services.AddSingleton<IConnection, Connection>();
+
+// Cria banco/tabelas se necessário
+EnsureDatabaseAndTablesCreated(
+    builder.Services.BuildServiceProvider().GetRequiredService<IConnection>(),
+    builder.Configuration
+);
 
 builder.Services.AddScoped<IAutentication, Autentication>();
 

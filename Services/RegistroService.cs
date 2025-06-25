@@ -1,50 +1,55 @@
 using AutoMapper;
-using HyperEfficient.Contracts.Repository;
-using HyperEfficient.Contracts.Service;
-using HyperEfficient.DTOs.MessageResponse;
-using HyperEfficient.DTOs.Registro;
+using HyperEfficient.Contracts.Repositories;
+using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.MessageResponse;
+using HyperEfficient.Dtos.Registro;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Services
+namespace HyperEfficient.Services;
+
+public class RegistroService : IRegistroService
 {
-    public class RegistroService : IRegistroService
+    private readonly IMapper _map;
+    private readonly IRegistroRepository _registroRepository;
+
+    public RegistroService(IRegistroRepository registroRepository, IMapper map)
     {
-        private readonly IRegistroRepository _registroRepository;
-        private readonly IMapper _map;
+        _registroRepository = registroRepository;
+        _map = map;
+    }
 
-        public RegistroService(IRegistroRepository registroRepository, IMapper map)
-        {
-            _registroRepository = registroRepository;
-            _map = map;
-        }
+    public async Task<MessageResponse> Insert(RegistroInsertDto dto)
+    {
+        if (await _registroRepository.Insert(_map.Map<RegistroEntity>(dto)) <= 0)
+            throw new KeyNotFoundException($"Não foi possível cadastrar o registro!");
 
-        public async Task<MessageResponse> Insert(RegistroInsertDTO dto)
-        {
-            await _registroRepository.Insert(_map.Map<RegistroEntity>(dto));
-            return new MessageResponse { Message = "Registro cadastrado com sucesso!" };
-        }
+        return new MessageResponse { Message = "Registro cadastrado com sucesso!" };
+    }
 
-        public async Task<MessageResponse> Update(RegistroEntity registro)
-        {
-            await _registroRepository.Update(registro);
-            return new MessageResponse { Message = "Registro editado com sucesso!" };
-        }
+    public async Task<MessageResponse> Update(RegistroEntity registro)
+    {
+        if (await _registroRepository.Update(registro) <= 0)
+            throw new KeyNotFoundException("Não foi possível editar o registro!");
 
-        public async Task<MessageResponse> Delete(int id)
-        {
-            await _registroRepository.Delete(id);
-            return new MessageResponse { Message = "Registro deletado com sucesso!" };
-        }
+        return new MessageResponse { Message = "Registro editado com sucesso!" };
+    }
 
-        public async Task<RegistroGetAllResponse> GetAll()
-        {
-            var registros = await _registroRepository.GetAll();
-            return new RegistroGetAllResponse { Data = registros };
-        }
+    public async Task<MessageResponse> Delete(int id)
+    {
+        if (await _registroRepository.Delete(id) <= 0)
+            throw new KeyNotFoundException("Não foi possível deletar o registro!");
 
-        public async Task<RegistroEntity> GetById(int id)
-        {
-            return await _registroRepository.GetById(id);
-        }
+        return new MessageResponse { Message = "Registro deletado com sucesso!" };
+    }
+
+    public async Task<RegistroGetAllResponse> GetAll()
+    {
+        return new RegistroGetAllResponse { Data = await _registroRepository.GetAll() ?? new List<RegistroEntity>() };
+    }
+
+    public async Task<RegistroEntity> GetById(int id)
+    {
+        return await _registroRepository.GetById(id)
+               ?? throw new KeyNotFoundException("Registro não encontrado!");
     }
 }

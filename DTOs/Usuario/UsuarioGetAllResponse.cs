@@ -1,10 +1,8 @@
-using HyperEfficient.DTOs.Base;
+using HyperEfficient.Dtos.Base;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.DTOs.Usuario
-{
-    public class UsuarioGetAllResponse : GetAllResponseBase<UsuarioEntity>
-    {
-    }
-}
+namespace HyperEfficient.Dtos.Usuario;
 
+public class UsuarioGetAllResponse : GetAllResponseBase<UsuarioEntity>
+{
+}

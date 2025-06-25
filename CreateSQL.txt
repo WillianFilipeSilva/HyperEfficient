@@ -4,14 +4,14 @@ USE `hyperefficient`;
 
 CREATE TABLE `Categoria` (
   `Id`        INT NOT NULL AUTO_INCREMENT,
-  `Nome`      VARCHAR(45) NOT NULL,
+  `Nome`      VARCHAR(100) NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB;
 
 CREATE TABLE `Setor` (
   `Id`          INT NOT NULL AUTO_INCREMENT,
   `GastoGeral`  DECIMAL(10,2) NULL,
-  `NomeSetor`   VARCHAR(45)   NULL,
+  `Nome`   VARCHAR(100)   NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB;
 
@@ -48,7 +48,7 @@ CREATE TABLE `Registro` (
 
 CREATE TABLE `Usuario` (
   `Id`       INT NOT NULL AUTO_INCREMENT,
-  `Nome`     VARCHAR(30)  NOT NULL,
+  `Nome`     VARCHAR(100)  NOT NULL,
   `CriadoEm` DATETIME     NOT NULL,
   `Senha`    VARCHAR(255) NULL,
   `Email`    VARCHAR(150) NULL,

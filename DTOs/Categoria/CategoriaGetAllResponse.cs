@@ -1,9 +1,8 @@
-using HyperEfficient.DTOs.Base;
+using HyperEfficient.Dtos.Base;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.DTOs.Categoria
+namespace HyperEfficient.Dtos.Categoria;
+
+public class CategoriaGetAllResponse : GetAllResponseBase<CategoriaEntity>
 {
-    public class CategoriaGetAllResponse : GetAllResponseBase<CategoriaEntity>
-    {
-    }
 }

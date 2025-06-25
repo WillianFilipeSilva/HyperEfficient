@@ -1,9 +1,8 @@
-using HyperEfficient.DTOs.Base;
+using HyperEfficient.Dtos.Base;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.DTOs.Setor
+namespace HyperEfficient.Dtos.Setor;
+
+public class SetorGetAllResponse : GetAllResponseBase<SetorEntity>
 {
-    public class SetorGetAllResponse : GetAllResponseBase<SetorEntity>
-    {
-    }
 }

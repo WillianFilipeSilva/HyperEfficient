@@ -1,67 +1,82 @@
 using HyperEfficient.Contracts.Infrastructure;
-using HyperEfficient.Contracts.Repository;
+using HyperEfficient.Contracts.Repositories;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Repositories
+namespace HyperEfficient.Repositories;
+
+public class SetorRepository : ISetorRepository
 {
-    public class SetorRepository : ISetorRepository
+    private readonly IConnection _connection;
+
+    public SetorRepository(IConnection connection)
     {
-        private readonly IConnection _connection;
+        _connection = connection;
+    }
 
-        public SetorRepository(IConnection connection)
-        {
-            _connection = connection;
-        }
-
-        public async Task Insert(SetorEntity setor)
-        {
-            string sql = $@"
-            INSERT INTO SETOR (GASTOGERAL, NOMESETOR)
-                VALUE (
+    public async Task<int> Insert(SetorEntity setor)
+    {
+        var sql = @"
+            INSERT INTO SETOR (GASTOGERAL, NOME)
+                VALUES (
                     @GastoGeral,
-                    @NomeSetor
-                )";
+                    @Nome
+                );";
 
-            await _connection.ExecuteAsync(sql, setor);
-        }
+        return await _connection.ExecuteAsync(sql, setor);
+    }
 
-        public async Task Update(SetorEntity setor)
-        {
-            string sql = @"
-                   UPDATE SETOR
-                     SET GASTOGERAL = @GastoGeral,
-                         NOMESETOR = @NomeSetor
-                     WHERE ID = @Id";
+    public async Task<int> Update(SetorEntity setor)
+    {
+        var sql = @"
+            UPDATE SETOR
+                SET GASTOGERAL = @GastoGeral,
+                    NOME = @Nome
+            WHERE ID = @Id";
 
-            await _connection.ExecuteAsync(sql, setor);
-        }
+        return await _connection.ExecuteAsync(sql, setor);
+    }
 
-        public async Task Delete(int id)
-        {
-            await _connection.ExecuteAsync("DELETE FROM SETOR WHERE ID = @id", new { id });
-        }
+    public async Task<int> Delete(int id)
+    {
+        return await _connection.ExecuteAsync("DELETE FROM SETOR WHERE ID = @id", new { id });
+    }
 
-        public async Task<IEnumerable<SetorEntity>> GetAll()
-        {
-            string sql = $@"
-                SELECT ID AS {nameof(SetorEntity.Id)},
-                       GASTOGERAL AS {nameof(SetorEntity.GastoGeral)},
-                       NOMESETOR AS {nameof(SetorEntity.NomeSetor)}
-                FROM SETOR";
+    public async Task<IEnumerable<SetorEntity>> GetAll()
+    {
+        var sql = $@"
+            SELECT ID AS {nameof(SetorEntity.Id)},
+                   GASTOGERAL AS {nameof(SetorEntity.GastoGeral)},
+                   NOME AS {nameof(SetorEntity.Nome)}
+            FROM SETOR";
 
-            return await _connection.ExecuteQueryAsync<SetorEntity>(sql);
-        }
+        return await _connection.ExecuteQueryAsync<SetorEntity>(sql);
+    }
 
-        public async Task<SetorEntity> GetById(int id)
-        {
-            string sql = $@"
-                     SELECT ID AS {nameof(SetorEntity.Id)},
-                            GASTOGERAL AS {nameof(SetorEntity.GastoGeral)},
-                            NOMESETOR AS {nameof(SetorEntity.NomeSetor)}
-                     FROM SETOR
-                     WHERE ID = @id";
+    public async Task<IEnumerable<SetorEntity>> GetPaged(int page, int pageSize)
+    {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 10;
+        var offset = (page - 1) * pageSize;
 
-            return await _connection.ExecuteQueryFirstAsync<SetorEntity>(sql, new { id });
-        }
+        var sql = $@"
+            SELECT ID AS {nameof(SetorEntity.Id)},
+                   GASTOGERAL AS {nameof(SetorEntity.GastoGeral)},
+                   NOME AS {nameof(SetorEntity.Nome)}
+            FROM SETOR
+            LIMIT @pageSize OFFSET @offset";
+
+        return await _connection.ExecuteQueryAsync<SetorEntity>(sql, new { pageSize, offset });
+    }
+
+    public async Task<SetorEntity?> GetById(int id)
+    {
+        var sql = $@"
+            SELECT ID AS {nameof(SetorEntity.Id)},
+                   GASTOGERAL AS {nameof(SetorEntity.GastoGeral)},
+                   NOME AS {nameof(SetorEntity.Nome)}
+            FROM SETOR
+            WHERE ID = @id";
+
+        return await _connection.ExecuteQueryFirstAsync<SetorEntity>(sql, new { id });
     }
 }

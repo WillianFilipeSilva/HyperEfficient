@@ -1,15 +1,14 @@
-using HyperEfficient.DTOs.MessageResponse;
-using HyperEfficient.DTOs.Registro;
+using HyperEfficient.Dtos.MessageResponse;
+using HyperEfficient.Dtos.Registro;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Contracts.Service
+namespace HyperEfficient.Contracts.Services;
+
+public interface IRegistroService
 {
-    public interface IRegistroService
-    {
-        Task<MessageResponse> Insert(RegistroInsertDTO equipamento);
-        Task<MessageResponse> Update(RegistroEntity equipamento);
-        Task<MessageResponse> Delete(int id);
-        Task<RegistroGetAllResponse> GetAll();
-        Task<RegistroEntity> GetById(int id);
-    }
+    Task<MessageResponse> Insert(RegistroInsertDto equipamento);
+    Task<MessageResponse> Update(RegistroEntity equipamento);
+    Task<MessageResponse> Delete(int id);
+    Task<RegistroGetAllResponse> GetAll();
+    Task<RegistroEntity> GetById(int id);
 }

@@ -1,15 +1,14 @@
-using HyperEfficient.DTOs.MessageResponse;
-using HyperEfficient.DTOs.Setor;
+using HyperEfficient.Dtos.MessageResponse;
+using HyperEfficient.Dtos.Setor;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Contracts.Service
+namespace HyperEfficient.Contracts.Services;
+
+public interface ISetorService
 {
-    public interface ISetorService
-    {
-        Task<MessageResponse> Insert(SetorInsertDTO equipamento);
-        Task<MessageResponse> Update(SetorEntity equipamento);
-        Task<MessageResponse> Delete(int id);
-        Task<SetorGetAllResponse> GetAll();
-        Task<SetorEntity> GetById(int id);
-    }
+    Task<MessageResponse> Insert(SetorInsertDto equipamento);
+    Task<MessageResponse> Update(SetorEntity equipamento);
+    Task<MessageResponse> Delete(int id);
+    Task<SetorGetAllResponse> GetAll();
+    Task<SetorEntity> GetById(int id);
 }

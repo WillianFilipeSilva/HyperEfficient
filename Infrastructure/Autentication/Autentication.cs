@@ -5,34 +5,34 @@ using HyperEfficient.Contracts.Infrastructure;
 using HyperEfficient.Entities;
 using Microsoft.IdentityModel.Tokens;
 
-namespace HyperEfficient.Infrastructure.Autentication
+namespace HyperEfficient.Infrastructure.Autentication;
+
+public class Autentication : IAutentication
 {
-    public class Autentication : IAutentication
+    private readonly IConfiguration _configuration;
+
+    public Autentication(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+    }
 
-        public Autentication(IConfiguration configuration)
+    public string GenerateToken(UsuarioEntity usuarioEntity)
+    {
+        var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
+        var tokenDescriptor = new SecurityTokenDescriptor
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-        }
-
-        public string GenerateToken(UsuarioEntity usuarioEntity)
-        {
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            Subject = new ClaimsIdentity(new[]
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, usuarioEntity.Nome),
-                    new Claim(ClaimTypes.Email, usuarioEntity.Email)
-                }),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
+                new Claim(ClaimTypes.Name, usuarioEntity.Nome),
+                new Claim(ClaimTypes.Email, usuarioEntity.Email)
+            }),
+            Expires = DateTime.UtcNow.AddHours(1),
+            SigningCredentials =
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
     }
 }

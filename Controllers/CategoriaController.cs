@@ -1,51 +1,55 @@
 using HyperEfficient.Contracts.Services;
-using HyperEfficient.DTOs.Categoria;
-using HyperEfficient.DTOs.Equipamento;
-using HyperEfficient.DTOs.MessageResponse;
+using HyperEfficient.Dtos.Categoria;
+using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HyperEfficient.Controllers
+namespace HyperEfficient.Controllers;
+
+[ApiController]
+[Route("categorias")]
+public class CategoriaController : ControllerBase
 {
-    [ApiController]
-    [Route("categorias")]
-    public class CategoriaController : ControllerBase
+    private readonly ICategoriaService _categoriaService;
+
+    public CategoriaController(ICategoriaService categoriaService)
     {
-        private readonly ICategoriaService _categoriaService;
+        _categoriaService = categoriaService;
+    }
 
-        public CategoriaController(ICategoriaService categoriaService)
-        {
-            _categoriaService = categoriaService;
-        }
+    [HttpPost]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> InsertCategoria([FromBody] CategoriaInsertDto categoria)
+    {
+        return Ok(await _categoriaService.Insert(categoria));
+    }
 
-        [HttpPost]
-        public async Task<ActionResult<MessageResponse>> InsertCategoria(CategoriaInsertDTO categoria)
-        {
-            return Ok(await _categoriaService.Insert(categoria));
-        }
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> UpdateCategoria([FromBody] CategoriaEntity categoria)
+    {
+        return Ok(await _categoriaService.Update(categoria));
+    }
 
-        [HttpPut]
-        public async Task<ActionResult<MessageResponse>> UpdateCategoria(CategoriaEntity nome)
-        {
-            return Ok(await _categoriaService.Update(nome));
-        }
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> DeleteCategoria(int id)
+    {
+        return Ok(await _categoriaService.Delete(id));
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<MessageResponse>> DeleteCategoria(int id)
-        {
-            return Ok(await _categoriaService.Delete(id));
-        }
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<CategoriaGetAllResponse>> GetAllCategorias()
+    {
+        return Ok(await _categoriaService.GetAll());
+    }
 
-        [HttpGet]
-        public async Task<ActionResult<EquipamentoGetAllResponse>> GetAllCategorias()
-        {
-            return Ok(await _categoriaService.GetAll());
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CategoriaEntity>> GetCategoriaById(int id)
-        {
-            return Ok(await _categoriaService.GetById(id));
-        }
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<ActionResult<CategoriaEntity>> GetCategoriaById(int id)
+    {
+        return Ok(await _categoriaService.GetById(id));
     }
 }

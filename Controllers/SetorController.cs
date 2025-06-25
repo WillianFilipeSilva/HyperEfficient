@@ -1,50 +1,55 @@
-using Microsoft.AspNetCore.Mvc;
-using HyperEfficient.Contracts.Service;
-using HyperEfficient.DTOs.Setor;
-using HyperEfficient.DTOs.MessageResponse;
+using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.MessageResponse;
+using HyperEfficient.Dtos.Setor;
 using HyperEfficient.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace HyperEfficient.Controllers
+namespace HyperEfficient.Controllers;
+
+[ApiController]
+[Route("setores")]
+public class SetorController : ControllerBase
 {
-    [ApiController]
-    [Route("setores")]
-    public class SetorController : ControllerBase
+    private readonly ISetorService _setorService;
+
+    public SetorController(ISetorService setorService)
     {
-        private readonly ISetorService _setorService;
+        _setorService = setorService;
+    }
 
-        public SetorController(ISetorService setorService)
-        {
-            _setorService = setorService;
-        }
+    [HttpPost]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> InsertSetor([FromBody] SetorInsertDto setor)
+    {
+        return Ok(await _setorService.Insert(setor));
+    }
 
-        [HttpPost]
-        public async Task<ActionResult<MessageResponse>> InsertSetor(SetorInsertDTO setor)
-        {
-            return Ok(await _setorService.Insert(setor));
-        }
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> UpdateSetor([FromBody] SetorEntity setor)
+    {
+        return Ok(await _setorService.Update(setor));
+    }
 
-        [HttpPut]
-        public async Task<ActionResult<MessageResponse>> UpdateSetor(SetorEntity setor)
-        {
-            return Ok(await _setorService.Update(setor));
-        }
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> DeleteSetor(int id)
+    {
+        return Ok(await _setorService.Delete(id));
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<MessageResponse>> DeleteSetor(int id)
-        {
-            return Ok(await _setorService.Delete(id));
-        }
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<SetorGetAllResponse>> GetAllSetores()
+    {
+        return Ok(await _setorService.GetAll());
+    }
 
-        [HttpGet]
-        public async Task<ActionResult<SetorGetAllResponse>> GetAllSetores()
-        {
-            return Ok(await _setorService.GetAll());
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SetorEntity>> GetSetorById(int id)
-        {
-            return Ok(await _setorService.GetById(id));
-        }
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<ActionResult<SetorEntity>> GetSetorById(int id)
+    {
+        return Ok(await _setorService.GetById(id));
     }
 }

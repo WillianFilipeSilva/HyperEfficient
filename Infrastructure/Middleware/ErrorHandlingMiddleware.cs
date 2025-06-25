@@ -2,9 +2,9 @@
 
 public class ErrorHandlingMiddleware
 {
-    private readonly RequestDelegate _next;
+    private const string MensagemPadrao = "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.";
     private readonly ILogger<ErrorHandlingMiddleware> _log;
-    const string MensagemPadrao = "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.";
+    private readonly RequestDelegate _next;
 
     public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> log)
     {

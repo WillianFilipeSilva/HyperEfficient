@@ -1,10 +1,7 @@
-﻿using HyperEfficient.Entities;
+﻿namespace HyperEfficient.Dtos.Usuario;
 
-namespace HyperEfficient.DTOs.Usuario
+public class UsuarioLoginTokenDto
 {
-    public class UsuarioLoginTokenDTO
-    {
-        public string Token { get; set; }
-        public UsuarioEntity Usuario { get; set; }
-    }
+    public string Token { get; set; }
+    public UsuarioDto Usuario { get; set; }
 }

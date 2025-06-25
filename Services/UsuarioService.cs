@@ -1,69 +1,77 @@
 using AutoMapper;
 using HyperEfficient.Contracts.Infrastructure;
 using HyperEfficient.Contracts.Repositories;
-using HyperEfficient.Contracts.Service;
-using HyperEfficient.DTOs.MessageResponse;
-using HyperEfficient.DTOs.Usuario;
+using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.MessageResponse;
+using HyperEfficient.Dtos.Usuario;
 using HyperEfficient.Entities;
-using static HyperEfficient.Infrastructure.Criptografia.Criptografia;
+using static HyperEfficient.Infrastructure.Criptography.Criptography;
 
-namespace HyperEfficient.Services
+namespace HyperEfficient.Services;
+
+public class UsuarioService : IUsuarioService
 {
-    public class UsuarioService : IUsuarioService
+    private readonly IAutentication _autentication;
+    private readonly IMapper _map;
+    private readonly IUsuarioRepository _usuarioRepository;
+
+    public UsuarioService(IUsuarioRepository usuarioRepository, IMapper map, IAutentication autentication)
     {
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IMapper _map;
-        private readonly IAutentication _autentication;
+        _usuarioRepository = usuarioRepository;
+        _map = map;
+        _autentication = autentication;
+    }
 
-        public UsuarioService(IUsuarioRepository usuarioRepository, IMapper map, IAutentication autentication)
+    public async Task<MessageResponse> Insert(UsuarioInsertDto dto)
+    {
+        dto.Senha = GeneratePbkdf2Hash(dto.Senha);
+        if (await _usuarioRepository.Insert(_map.Map<UsuarioEntity>(dto)) <= 0)
+            throw new KeyNotFoundException($"Não foi possível cadastrar o usuário {dto.Nome}!");
+
+        return new MessageResponse { Message = "Usuário cadastrado com sucesso!" };
+    }
+
+    public async Task<MessageResponse> Update(UsuarioEntity usuario)
+    {
+        if (await _usuarioRepository.Update(usuario) <= 0)
+            throw new KeyNotFoundException($"Não foi possível editar o usuário: {usuario.Nome}!");
+
+        return new MessageResponse { Message = "Usuário editado com sucesso!" };
+    }
+
+    public async Task<MessageResponse> Delete(int id)
+    {
+        if (await _usuarioRepository.Delete(id) <= 0)
+            throw new KeyNotFoundException($"Não foi encontrado nenhum Usuário com o id: {id}");
+
+        return new MessageResponse { Message = "Usuário deletado com sucesso!" };
+    }
+
+    public async Task<UsuarioGetAllResponse> GetAll()
+    {
+        return new UsuarioGetAllResponse { Data = await _usuarioRepository.GetAll() ?? new List<UsuarioEntity>() };
+    }
+
+    public async Task<UsuarioDto> GetById(int id)
+    {
+        return _map.Map<UsuarioDto?>(_usuarioRepository.GetById(id))
+            ?? throw new KeyNotFoundException("Usuário não encontrado!");
+    }
+
+    public async Task<UsuarioLoginTokenDto> Login(UsuarioLoginDto usuarioLoginDto)
+    {
+        var usuario = await _usuarioRepository.GetByEmail(usuarioLoginDto.Email)
+            ?? throw new KeyNotFoundException("Usuário ou senha inválidos!");
+
+        if (!VerifyPbkdf2Hash(usuarioLoginDto.Senha, usuario.Senha))
+            throw new KeyNotFoundException("Usuário ou senha inválidos!");
+
+        var token = _autentication.GenerateToken(usuario);
+
+        return new UsuarioLoginTokenDto
         {
-            _usuarioRepository = usuarioRepository;
-            _map = map;
-            _autentication = autentication;
-        }
-
-        public async Task<MessageResponse> Insert(UsuarioInsertDTO dto)
-        {
-            dto.Senha = GeneratePBKDF2Hash(dto.Senha);
-            await _usuarioRepository.Insert(_map.Map<UsuarioEntity>(dto));
-            return new MessageResponse {Message = "Usuário cadastrado com sucesso!" };
-        }
-
-        public async Task<MessageResponse> Update(UsuarioEntity usuario)
-        {
-            await _usuarioRepository.Update(usuario);
-            return new MessageResponse { Message = "Usuário editado com sucesso!" };
-        }
-
-        public async Task<MessageResponse> Delete(int id)
-        {
-            await _usuarioRepository.Delete(id);
-            return new MessageResponse { Message = "Usuário deletado com sucesso!" };
-        }
-
-        public async Task<UsuarioGetAllResponse> GetAll()
-        {
-            var usuarios = await _usuarioRepository.GetAll();
-            return new UsuarioGetAllResponse { Data = usuarios };
-        }
-
-        public async Task<UsuarioEntity> GetById(int id)
-        {
-            return await _usuarioRepository.GetById(id);
-        }
-
-        public async Task<UsuarioLoginTokenDTO> Login(UsuarioLoginDTO usuarioLoginDto)
-        {
-            var usuario = await _usuarioRepository.GetByEmail(usuarioLoginDto.Email);
-
-            usuarioLoginDto.Senha = GeneratePBKDF2Hash(usuarioLoginDto.Senha);
-            string token = _autentication.GenerateToken(usuario);
-
-            return new UsuarioLoginTokenDTO()
-            {
-                Token = token,
-                Usuario = usuario
-            };
-        }
+            Token = token,
+            Usuario = _map.Map<UsuarioDto>(usuario)
+        };
     }
 }

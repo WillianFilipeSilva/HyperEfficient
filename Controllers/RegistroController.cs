@@ -1,50 +1,55 @@
-using Microsoft.AspNetCore.Mvc;
-using HyperEfficient.Contracts.Service;
-using HyperEfficient.DTOs.Registro;
-using HyperEfficient.DTOs.MessageResponse;
+using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.MessageResponse;
+using HyperEfficient.Dtos.Registro;
 using HyperEfficient.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace HyperEfficient.Controllers
+namespace HyperEfficient.Controllers;
+
+[ApiController]
+[Route("registros")]
+public class RegistroController : ControllerBase
 {
-    [ApiController]
-    [Route("registros")]
-    public class RegistroController : ControllerBase
+    private readonly IRegistroService _registroService;
+
+    public RegistroController(IRegistroService registroService)
     {
-        private readonly IRegistroService _registroService;
+        _registroService = registroService;
+    }
 
-        public RegistroController(IRegistroService registroService)
-        {
-            _registroService = registroService;
-        }
+    [HttpPost]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> InsertRegistro([FromBody] RegistroInsertDto registro)
+    {
+        return Ok(await _registroService.Insert(registro));
+    }
 
-        [HttpPost]
-        public async Task<ActionResult<MessageResponse>> InsertRegistro(RegistroInsertDTO registro)
-        {
-            return Ok(await _registroService.Insert(registro));
-        }
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> UpdateRegistro([FromBody] RegistroEntity registro)
+    {
+        return Ok(await _registroService.Update(registro));
+    }
 
-        [HttpPut]
-        public async Task<ActionResult<MessageResponse>> UpdateRegistro(RegistroEntity registro)
-        {
-            return Ok(await _registroService.Update(registro));
-        }
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> DeleteRegistro(int id)
+    {
+        return Ok(await _registroService.Delete(id));
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<MessageResponse>> DeleteRegistro(int id)
-        {
-            return Ok(await _registroService.Delete(id));
-        }
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<RegistroGetAllResponse>> GetAllRegistros()
+    {
+        return Ok(await _registroService.GetAll());
+    }
 
-        [HttpGet]
-        public async Task<ActionResult<RegistroGetAllResponse>> GetAllRegistros()
-        {
-            return Ok(await _registroService.GetAll());
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<RegistroEntity>> GetRegistroById(int id)
-        {
-            return Ok(await _registroService.GetById(id));
-        }
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<ActionResult<RegistroEntity>> GetRegistroById(int id)
+    {
+        return Ok(await _registroService.GetById(id));
     }
 }

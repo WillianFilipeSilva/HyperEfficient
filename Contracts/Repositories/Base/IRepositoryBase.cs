@@ -1,11 +1,10 @@
-namespace HyperEfficient.Contracts.Repository.Base
+namespace HyperEfficient.Contracts.Repositories.Base;
+
+public interface IRepositoryBase<T> where T : class
 {
-    public interface IRepositoryBase<T> where T : class
-    {
-        Task Insert(T entity);
-        Task Update(T entity);
-        Task Delete(int id);
-        Task<IEnumerable<T>> GetAll();
-        Task<T?> GetById(int id);
-    }
+    Task<int> Insert(T entity);
+    Task<int> Update(T entity);
+    Task<int> Delete(int id);
+    Task<IEnumerable<T>> GetAll();
+    Task<T?> GetById(int id);
 }

@@ -1,50 +1,55 @@
-using Microsoft.AspNetCore.Mvc;
-using HyperEfficient.Contracts.Service;
-using HyperEfficient.DTOs.Equipamento;
-using HyperEfficient.DTOs.MessageResponse;
+using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.Equipamento;
+using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace HyperEfficient.Controllers
+namespace HyperEfficient.Controllers;
+
+[ApiController]
+[Route("equipamentos")]
+public class EquipamentoController : ControllerBase
 {
-    [ApiController]
-    [Route("equipamentos")]
-    public class EquipamentoController : ControllerBase
+    private readonly IEquipamentoService _equipamentoService;
+
+    public EquipamentoController(IEquipamentoService equipamentoService)
     {
-        private readonly IEquipamentoService _equipamentoService;
+        _equipamentoService = equipamentoService;
+    }
 
-        public EquipamentoController(IEquipamentoService equipamentoService)
-        {
-            _equipamentoService = equipamentoService;
-        }
+    [HttpPost]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> InsertEquipamento([FromBody] EquipamentoInsertDto equipamento)
+    {
+        return Ok(await _equipamentoService.Insert(equipamento));
+    }
 
-        [HttpPost]
-        public async Task<ActionResult<MessageResponse>> InsertEquipamento(EquipamentoInsertDTO equipamento)
-        {
-            return Ok(await _equipamentoService.Insert(equipamento));
-        }
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> UpdateEquipamento([FromBody] EquipamentoEntity equipamento)
+    {
+        return Ok(await _equipamentoService.Update(equipamento));
+    }
 
-        [HttpPut]
-        public async Task<ActionResult<MessageResponse>> UpdateEquipamento(EquipamentoEntity equipamento)
-        {
-            return Ok(await _equipamentoService.Update(equipamento));
-        }
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> DeleteEquipamento(int id)
+    {
+        return Ok(await _equipamentoService.Delete(id));
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<MessageResponse>> DeleteEquipamento(int id)
-        {
-            return Ok(await _equipamentoService.Delete(id));
-        }
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<EquipamentoGetAllResponse>> GetAllEquipamentos()
+    {
+        return Ok(await _equipamentoService.GetAll());
+    }
 
-        [HttpGet]
-        public async Task<ActionResult<EquipamentoGetAllResponse>> GetAllEquipamentos()
-        {
-            return Ok(await _equipamentoService.GetAll());
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<EquipamentoEntity>> GetEquipamentoById(int id)
-        {
-            return Ok(await _equipamentoService.GetById(id));
-        }
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<ActionResult<EquipamentoEntity>> GetEquipamentoById(int id)
+    {
+        return Ok(await _equipamentoService.GetById(id));
     }
 }

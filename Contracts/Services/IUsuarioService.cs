@@ -1,17 +1,15 @@
-using HyperEfficient.DTOs.MessageResponse;
-using HyperEfficient.DTOs.Usuario;
+using HyperEfficient.Dtos.MessageResponse;
+using HyperEfficient.Dtos.Usuario;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Contracts.Service
-{
-    public interface IUsuarioService
-    {
-        Task<MessageResponse> Insert(UsuarioInsertDTO usuario);
-        Task<MessageResponse> Update(UsuarioEntity usuario);
-        Task<MessageResponse> Delete(int id);
-        Task<UsuarioGetAllResponse> GetAll();
-        Task<UsuarioEntity> GetById(int id);
-        Task<UsuarioLoginTokenDTO> Login(UsuarioLoginDTO Usuario);
+namespace HyperEfficient.Contracts.Services;
 
-    }
+public interface IUsuarioService
+{
+    Task<MessageResponse> Insert(UsuarioInsertDto usuario);
+    Task<MessageResponse> Update(UsuarioEntity usuario);
+    Task<MessageResponse> Delete(int id);
+    Task<UsuarioGetAllResponse> GetAll();
+    Task<UsuarioDto?> GetById(int id);
+    Task<UsuarioLoginTokenDto> Login(UsuarioLoginDto Usuario);
 }

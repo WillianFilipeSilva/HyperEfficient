@@ -1,63 +1,62 @@
-using Microsoft.AspNetCore.Mvc;
-using HyperEfficient.Contracts.Service;
-using HyperEfficient.DTOs.Usuario;
-using HyperEfficient.DTOs.MessageResponse;
+using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.MessageResponse;
+using HyperEfficient.Dtos.Usuario;
 using HyperEfficient.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace HyperEfficient.Controllers
+namespace HyperEfficient.Controllers;
+
+[ApiController]
+[Route("usuarios")]
+public class UsuarioController : ControllerBase
 {
-    [ApiController]
-    [Route("usuarios")]
-    public class UsuarioController : ControllerBase
+    private readonly IUsuarioService _usuarioService;
+
+    public UsuarioController(IUsuarioService usuarioService)
     {
-        private readonly IUsuarioService _usuarioService;
+        _usuarioService = usuarioService;
+    }
 
-        public UsuarioController(IUsuarioService usuarioService)
-        {
-            _usuarioService = usuarioService;
-        }
+    [HttpPost]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> InsertUsuario([FromBody] UsuarioInsertDto usuario)
+    {
+        return Ok(await _usuarioService.Insert(usuario));
+    }
 
-        [HttpPost]
-        public async Task<ActionResult<MessageResponse>> InsertUsuario(UsuarioInsertDTO usuario)
-        {
-            return Ok(await _usuarioService.Insert(usuario));
-        }
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> UpdateUsuario([FromBody] UsuarioEntity usuario)
+    {
+        return Ok(await _usuarioService.Update(usuario));
+    }
 
-        [HttpPut]
-        public async Task<ActionResult<MessageResponse>> UpdateUsuario(UsuarioEntity usuario)
-        {
-            return Ok(await _usuarioService.Update(usuario));
-        }
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<ActionResult<MessageResponse>> DeleteUsuario(int id)
+    {
+        return Ok(await _usuarioService.Delete(id));
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<MessageResponse>> DeleteUsuario(int id)
-        {
-            return Ok(await _usuarioService.Delete(id));
-        }
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<UsuarioGetAllResponse>> GetAllUsuarios()
+    {
+        return Ok(await _usuarioService.GetAll());
+    }
 
-        [HttpGet]
-        public async Task<ActionResult<UsuarioGetAllResponse>> GetAllsuarios()
-        {
-            return Ok(await _usuarioService.GetAll());
-        }
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<ActionResult<UsuarioDto>> GetUsuarioById(int id)
+    {
+        return Ok(await _usuarioService.GetById(id));
+    }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UsuarioEntity>> GetUsuarioById(int id)
-        {
-            return Ok(await _usuarioService.GetById(id));
-        }
-
-        [HttpGet("login")]
-        public async Task<ActionResult<UsuarioLoginTokenDTO>> Login(UsuarioLoginDTO user)
-        {
-            try
-            {
-                return Ok(await _usuarioService.Login(user));
-            }
-            catch (Exception ex)
-            {
-                return Unauthorized();
-            }
-        }
+    [HttpPost("login")]
+    [AllowAnonymous]
+    public async Task<ActionResult<UsuarioLoginTokenDto>> Login([FromBody] UsuarioLoginDto usuario)
+    {
+        return Ok(await _usuarioService.Login(usuario));
     }
 }

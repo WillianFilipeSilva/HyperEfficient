@@ -1,50 +1,55 @@
 using AutoMapper;
-using HyperEfficient.Contracts.Repository;
-using HyperEfficient.Contracts.Service;
-using HyperEfficient.DTOs.Equipamento;
-using HyperEfficient.DTOs.MessageResponse;
+using HyperEfficient.Contracts.Repositories;
+using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.Equipamento;
+using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Services
+namespace HyperEfficient.Services;
+
+public class EquipamentoService : IEquipamentoService
 {
-    public class EquipamentoService : IEquipamentoService
+    private readonly IEquipamentoRepository _equipamentoRepository;
+    private readonly IMapper _map;
+
+    public EquipamentoService(IEquipamentoRepository equipamentoRepository, IMapper map)
     {
-        private readonly IEquipamentoRepository _equipamentoRepository;
-        private readonly IMapper _map;
+        _equipamentoRepository = equipamentoRepository;
+        _map = map;
+    }
 
-        public EquipamentoService(IEquipamentoRepository equipamentoRepository, IMapper map)
-        {
-            _equipamentoRepository = equipamentoRepository;
-            _map = map;
-        }
+    public async Task<MessageResponse> Insert(EquipamentoInsertDto dto)
+    {
+        if (await _equipamentoRepository.Insert(_map.Map<EquipamentoEntity>(dto)) <= 0)
+            throw new KeyNotFoundException($"Não foi possível cadastrar o equipamento {dto.Nome}!");
 
-        public async Task<MessageResponse> Insert(EquipamentoInsertDTO dto)
-        {
-            await _equipamentoRepository.Insert(_map.Map<EquipamentoEntity>(dto));
-            return new MessageResponse { Message = "Equipamento cadastrado com sucesso!" };
-        }
+        return new MessageResponse { Message = "Equipamento cadastrado com sucesso!" };
+    }
 
-        public async Task<MessageResponse> Update(EquipamentoEntity equipamento)
-        {
-            await _equipamentoRepository.Update(equipamento);
-            return new MessageResponse { Message = "Equipamento editado com sucesso!" };
-        }
+    public async Task<MessageResponse> Update(EquipamentoEntity equipamento)
+    {
+        if (await _equipamentoRepository.Update(equipamento) <= 0)
+            throw new KeyNotFoundException($"Não foi possível editar o equipamento {equipamento.Nome}!");
 
-        public async Task<MessageResponse> Delete(int id)
-        {
-            await _equipamentoRepository.Delete(id);
-            return new MessageResponse { Message = "Equipamento deletado com sucesso!" };
-        }
+        return new MessageResponse { Message = "Equipamento editado com sucesso!" };
+    }
 
-        public async Task<EquipamentoGetAllResponse> GetAll()
-        {
-            var equipamentos = await _equipamentoRepository.GetAll();
-            return new EquipamentoGetAllResponse { Data = equipamentos };
-        }
+    public async Task<MessageResponse> Delete(int id)
+    {
+        if (await _equipamentoRepository.Delete(id) <= 0)
+            throw new KeyNotFoundException("Não foi possível deletar o equipamento!");
 
-        public async Task<EquipamentoEntity> GetById(int id)
-        {
-            return await _equipamentoRepository.GetById(id);
-        }
+        return new MessageResponse { Message = "Equipamento deletado com sucesso!" };
+    }
+
+    public async Task<EquipamentoGetAllResponse> GetAll()
+    {
+        return new EquipamentoGetAllResponse { Data = await _equipamentoRepository.GetAll() ?? new List<EquipamentoEntity>() };
+    }
+
+    public async Task<EquipamentoEntity> GetById(int id)
+    {
+        return await _equipamentoRepository.GetById(id)
+               ?? throw new KeyNotFoundException("Equipamento não encontrado!");
     }
 }

@@ -1,13 +1,21 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace HyperEfficient.DTOs.Equipamento
+namespace HyperEfficient.Dtos.Equipamento;
+
+public class EquipamentoInsertDto
 {
-    public class EquipamentoInsertDTO
-    {
-        public decimal GastokWh { get; set; }
-        public int CategoriaId { get; set; }
-        public int SetorId { get; set; }
-        public string Descricao { get; set; }
-        public string Nome { get; set; }
-    }
+    [Required] [StringLength(100)]
+    public string Nome { get; set; }
+
+    [Required] [StringLength(300)]
+    public string Descricao { get; set; }
+
+    [Range(1, double.MaxValue)]
+    public decimal Gastokwh { get; set; }
+
+    [Range(1, int.MaxValue)]
+    public int CategoriaId { get; set; }
+
+    [Range(1, int.MaxValue)]
+    public int SetorId { get; set; }
 }

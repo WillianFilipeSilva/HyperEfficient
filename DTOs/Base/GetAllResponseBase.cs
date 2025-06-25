@@ -1,7 +1,6 @@
-﻿namespace HyperEfficient.DTOs.Base
+﻿namespace HyperEfficient.Dtos.Base;
+
+public class GetAllResponseBase<T> where T : class
 {
-    public class GetAllResponseBase<T> where T : class
-    {
-        public IEnumerable<T> Data { get; set; }
-    }
+    public IEnumerable<T> Data { get; set; }
 }

@@ -1,15 +1,14 @@
-using HyperEfficient.DTOs.Categoria;
-using HyperEfficient.DTOs.MessageResponse;
+using HyperEfficient.Dtos.Categoria;
+using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Contracts.Services
+namespace HyperEfficient.Contracts.Services;
+
+public interface ICategoriaService
 {
-    public interface ICategoriaService
-    {
-        Task<MessageResponse> Insert(CategoriaInsertDTO categoria);
-        Task<MessageResponse> Update(CategoriaEntity categoria);
-        Task<MessageResponse> Delete(int id);
-        Task<CategoriaGetAllResponse> GetAll();
-        Task<CategoriaEntity> GetById(int id);
-    }
+    Task<MessageResponse> Insert(CategoriaInsertDto categoria);
+    Task<MessageResponse> Update(CategoriaEntity categoria);
+    Task<MessageResponse> Delete(int id);
+    Task<CategoriaGetAllResponse> GetAll();
+    Task<CategoriaEntity> GetById(int id);
 }

@@ -1,8 +1,8 @@
-namespace HyperEfficient.DTOs.Setor
+using System.ComponentModel.DataAnnotations;
+
+namespace HyperEfficient.Dtos.Setor;
+
+public class SetorInsertDto
 {
-    public class SetorInsertDTO
-    {
-        public decimal GastoGeral { get; set; }
-        public string NomeSetor { get; set; }
-    }
+    [Required] [StringLength(100)] public string Nome { get; set; }
 }

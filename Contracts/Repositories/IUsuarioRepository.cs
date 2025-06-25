@@ -1,10 +1,10 @@
-using HyperEfficient.Contracts.Repository.Base;
+using HyperEfficient.Contracts.Repositories.Base;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Contracts.Repositories
+namespace HyperEfficient.Contracts.Repositories;
+
+public interface IUsuarioRepository : IRepositoryBase<UsuarioEntity>
 {
-    public interface IUsuarioRepository : IRepositoryBase<UsuarioEntity>
-    {
-        Task<UsuarioEntity> GetByEmail(string email);
-    }
+    Task<UsuarioEntity?> GetByEmail(string email);
+    Task<IEnumerable<UsuarioEntity>> GetPaged(int page, int pageSize);
 }

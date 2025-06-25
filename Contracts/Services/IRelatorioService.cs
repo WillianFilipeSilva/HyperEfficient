@@ -1,11 +1,12 @@
-﻿using HyperEfficient.DTOs.Relatorios;
+﻿using HyperEfficient.Dtos.Relatorios;
 
-namespace HyperEfficient.Contracts.Service
+namespace HyperEfficient.Contracts.Service;
+
+public interface IRelatorioService
 {
-    public interface IRelatorioService
-    {
-        Task<RelatorioEmpresaResponse> GetRelatorioEmpresa(DateTime dataInicio, DateTime dataFim);
-        Task<RelatorioSetorResponse> GetRelatorioSetor(int setorId, DateTime dataInicio, DateTime dataFim);
-        Task<RelatorioEquipamentoResponse> GetRelatorioEquipamento(int equipamentoId, DateTime dataInicio, DateTime dataFim);
-    }
+    Task<RelatorioEmpresaResponse> GetRelatorioEmpresa(DateTime dataInicio, DateTime dataFim);
+    Task<RelatorioSetorResponse> GetRelatorioSetor(int setorId, DateTime dataInicio, DateTime dataFim);
+
+    Task<RelatorioEquipamentoResponse>
+        GetRelatorioEquipamento(int equipamentoId, DateTime dataInicio, DateTime dataFim);
 }

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using HyperEfficient.DTOs.Usuario;
+using HyperEfficient.Dtos.Usuario;
 using HyperEfficient.Entities;
 
 namespace HyperEfficient.Infrastructure.Mapping;
@@ -8,8 +8,10 @@ public class UsuarioProfile : Profile
 {
     public UsuarioProfile()
     {
-        CreateMap<UsuarioInsertDTO, UsuarioEntity>()
-            .ForMember(d => d.CriadoEm, o => o.MapFrom(_ => DateTime.UtcNow))
-            .ForMember(d => d.Ativo, o => o.MapFrom(_ => true));
+        CreateMap<UsuarioInsertDto, UsuarioEntity>()
+            .ForMember(dest => dest.CriadoEm, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.Ativo, opt => opt.MapFrom(src => true));
+
+        CreateMap<UsuarioDto, UsuarioEntity>().ReverseMap();
     }
 }

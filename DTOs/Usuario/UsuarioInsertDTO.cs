@@ -1,17 +1,15 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace HyperEfficient.DTOs.Usuario
+namespace HyperEfficient.Dtos.Usuario;
+
+public class UsuarioInsertDto
 {
-    public class UsuarioInsertDTO
-    {
-        public string Nome { get; set; }
+    [Required] [StringLength(100)]
+    public string Nome { get; set; }
 
-        public DateTime CriadoEm { get; set; }
+    [EmailAddress] [Required]
+    public string Email { get; set; }
 
-        public string Senha { get; set; }
-
-        public string Email { get; set; }
-
-        public bool Ativo { get; set; }
-    }
+    [Required] [MinLength(6)]
+    public string Senha { get; set; }
 }
