@@ -19,7 +19,7 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<ActionResult<MessageResponse>> InsertUsuario([FromBody] UsuarioInsertDto usuario)
     {
         return Ok(await _usuarioService.Insert(usuario));
