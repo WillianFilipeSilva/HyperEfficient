@@ -16,6 +16,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        builder =>
+        {
+            builder.WithOrigins(
+                    "http://localhost:5500",
+                    "http://localhost:5075",
+                    "http://127.0.0.1:5500",
+                    "https://localhost:44352",
+                    "http://localhost:5205",
+                    "https://localhost:7051"
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 // Swagger + Bearer no header (apenas uma chamada)
 builder.Services.AddSwaggerGen(c =>
 {
@@ -65,10 +85,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Connection (lê a ConnectionString em appsettings.json)
 builder.Services.AddSingleton<IConnection, Connection>();
 
-// Cria banco/tabelas se necessário
 EnsureDatabaseAndTablesCreated(
     builder.Services.BuildServiceProvider().GetRequiredService<IConnection>(),
     builder.Configuration
@@ -76,14 +94,12 @@ EnsureDatabaseAndTablesCreated(
 
 builder.Services.AddScoped<IAutentication, Autentication>();
 
-// Registro automático de Repositories e Services
 builder.Services
     .AddCamadaInfra()
     .AddCamadaAplicacao();
 
 builder.Services.AddTransient<IRelatorioService, RelatorioService>();
 
-// AutoMapper – carrega todos os Profiles de todos os assemblies carregados
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
@@ -97,7 +113,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseMiddleware<ErrorHandlingMiddleware>();
-app.UseAuthentication(); // ATENÇÃO: UseAuthentication ANTES do Authorization!
+
+// Usa a policy de CORS definida acima
+app.UseCors(MyAllowSpecificOrigins);
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
