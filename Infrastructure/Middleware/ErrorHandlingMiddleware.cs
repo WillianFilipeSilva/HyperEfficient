@@ -1,10 +1,12 @@
-﻿namespace HyperEfficient.Infrastructure.Middleware;
+﻿using System.Net;
+using System.Text.Json;
+
+namespace HyperEfficient.Infrastructure.Middleware;
 
 public class ErrorHandlingMiddleware
 {
-    private const string MensagemPadrao = "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.";
-    private readonly ILogger<ErrorHandlingMiddleware> _log;
     private readonly RequestDelegate _next;
+    private readonly ILogger<ErrorHandlingMiddleware> _log;
 
     public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> log)
     {
@@ -20,14 +22,59 @@ public class ErrorHandlingMiddleware
         }
         catch (Exception ex)
         {
-            _log.LogError(ex, "Exception não tratada ");
-            context.Response.StatusCode = 500;
-            context.Response.ContentType = "application/json";
-            await context.Response.WriteAsJsonAsync(new
-            {
-                error = MensagemPadrao,
-                details = ex.Message
-            });
+            await HandleExceptionAsync(context, ex);
         }
+    }
+
+    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    {
+        var response = context.Response;
+        response.ContentType = "application/json";
+
+        var errorResponse = exception switch
+        {
+            KeyNotFoundException => new ErrorResponse
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+                Message = exception.Message,
+                Details = "Recurso não encontrado"
+            },
+            ArgumentException => new ErrorResponse
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+                Message = exception.Message,
+                Details = "Parâmetros inválidos"
+            },
+            UnauthorizedAccessException => new ErrorResponse
+            {
+                StatusCode = (int)HttpStatusCode.Unauthorized,
+                Message = "Acesso não autorizado",
+                Details = "Token inválido ou expirado"
+            },
+            InvalidOperationException => new ErrorResponse
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+                Message = exception.Message,
+                Details = "Operação inválida"
+            },
+            _ => new ErrorResponse
+            {
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                Message = "Ocorreu um erro interno no servidor",
+                Details = "Tente novamente mais tarde"
+            }
+        };
+
+        _log.LogError(exception, "Exception: {Message} | StatusCode: {StatusCode}",
+            exception.Message, errorResponse.StatusCode);
+
+        response.StatusCode = errorResponse.StatusCode;
+
+        var jsonResponse = JsonSerializer.Serialize(errorResponse, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        });
+
+        await response.WriteAsync(jsonResponse);
     }
 }
