@@ -1,21 +1,20 @@
-DROP SCHEMA IF EXISTS `hyperefficient`;
-CREATE SCHEMA `hyperefficient` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE SCHEMA IF NOT EXISTS `hyperefficient` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `hyperefficient`;
 
-CREATE TABLE `Categoria` (
+CREATE TABLE IF NOT EXISTS `Categoria` (
   `Id`        INT NOT NULL AUTO_INCREMENT,
   `Nome`      VARCHAR(100) NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB;
 
-CREATE TABLE `Setor` (
+CREATE TABLE IF NOT EXISTS `Setor` (
   `Id`          INT NOT NULL AUTO_INCREMENT,
   `GastoGeral`  DECIMAL(10,2) NULL,
   `Nome`   VARCHAR(100)   NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB;
 
-CREATE TABLE `Equipamento` (
+CREATE TABLE IF NOT EXISTS `Equipamento` (
   `Id`          INT NOT NULL AUTO_INCREMENT,
   `Nome`        VARCHAR(100) NOT NULL,
   `Descricao`   VARCHAR(300) NULL,
@@ -34,7 +33,7 @@ CREATE TABLE `Equipamento` (
       ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-CREATE TABLE `Registro` (
+CREATE TABLE IF NOT EXISTS `Registro` (
   `Id`            INT NOT NULL AUTO_INCREMENT,
   `DataInicial`   DATETIME NOT NULL,
   `DataFinal`     DATETIME NULL,
@@ -46,7 +45,7 @@ CREATE TABLE `Registro` (
       ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-CREATE TABLE `Usuario` (
+CREATE TABLE IF NOT EXISTS `Usuario` (
   `Id`       INT NOT NULL AUTO_INCREMENT,
   `Nome`     VARCHAR(100)  NOT NULL,
   `CriadoEm` DATETIME     NOT NULL,

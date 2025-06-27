@@ -26,7 +26,7 @@ public class Autentication : IAutentication
                 new Claim(ClaimTypes.Name, usuarioEntity.Nome),
                 new Claim(ClaimTypes.Email, usuarioEntity.Email)
             }),
-            Expires = DateTime.UtcNow.AddHours(1),
+            Expires = DateTime.UtcNow.AddHours(2),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
