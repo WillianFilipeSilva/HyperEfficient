@@ -33,6 +33,12 @@ public class ErrorHandlingMiddleware
 
         var errorResponse = exception switch
         {
+            InvalidCredentialsException => new ErrorResponse
+            {
+                StatusCode = (int)HttpStatusCode.Unauthorized,
+                Message = exception.Message,
+                Details = "Credenciais inválidas"
+            },
             KeyNotFoundException => new ErrorResponse
             {
                 StatusCode = (int)HttpStatusCode.NotFound,
@@ -77,4 +83,9 @@ public class ErrorHandlingMiddleware
 
         await response.WriteAsync(jsonResponse);
     }
+}
+
+public class InvalidCredentialsException : Exception
+{
+    public InvalidCredentialsException(string message) : base(message) { }
 }

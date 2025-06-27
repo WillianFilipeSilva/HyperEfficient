@@ -5,6 +5,7 @@ using HyperEfficient.Contracts.Services;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Dtos.Usuario;
 using HyperEfficient.Entities;
+using HyperEfficient.Infrastructure.Middleware;
 using static HyperEfficient.Infrastructure.Criptography.Criptography;
 
 namespace HyperEfficient.Services;
@@ -61,10 +62,10 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioLoginTokenDto> Login(UsuarioLoginDto usuarioLoginDto)
     {
         var usuario = await _usuarioRepository.GetByEmail(usuarioLoginDto.Email)
-            ?? throw new KeyNotFoundException("Usuário ou senha inválidos!");
+                      ?? throw new InvalidCredentialsException("Usuário ou senha inválidos!");
 
         if (!VerifyPbkdf2Hash(usuarioLoginDto.Senha, usuario.Senha))
-            throw new KeyNotFoundException("Usuário ou senha inválidos!");
+            throw new InvalidCredentialsException("Usuário ou senha inválidos!");
 
         var token = _autentication.GenerateToken(usuario);
 

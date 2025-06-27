@@ -33,10 +33,10 @@ public class Connection : IConnection
             : await con.QueryAsync<T>(sql, param);
     }
 
-    public async Task<T> ExecuteQueryFirstAsync<T>(string sql, object param)
+    public async Task<T?> ExecuteQueryFirstAsync<T>(string sql, object param)
     {
         using var con = GetConnection();
-        return await con.QueryFirstAsync<T>(sql, param);
+        return await con.QueryFirstOrDefaultAsync<T>(sql, param);
     }
 
     public async Task<T> ExecuteScalarAsync<T>(string sql, object param)
