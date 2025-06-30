@@ -9,4 +9,6 @@ public class UsuarioLoginDto
 
     [Required] [MinLength(6)]
     public string Senha { get; set; }
+
+    public bool LembrarDeMim { get; set; } = false;
 }

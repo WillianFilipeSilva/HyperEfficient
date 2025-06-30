@@ -59,4 +59,11 @@ public class UsuarioController : ControllerBase
     {
         return Ok(await _usuarioService.Login(usuario));
     }
+
+    [HttpGet("handshake")]
+    [Authorize]
+    public async Task<ActionResult> HandShake()
+    {
+        return Ok(new { });
+    }
 }

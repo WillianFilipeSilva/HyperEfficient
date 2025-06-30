@@ -16,7 +16,7 @@ public class Autentication : IAutentication
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
-    public string GenerateToken(UsuarioEntity usuarioEntity)
+    public string GenerateToken(UsuarioEntity usuarioEntity, TimeSpan tempoExpiracao)
     {
         var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -26,7 +26,7 @@ public class Autentication : IAutentication
                 new Claim(ClaimTypes.Name, usuarioEntity.Nome),
                 new Claim(ClaimTypes.Email, usuarioEntity.Email)
             }),
-            Expires = DateTime.UtcNow.AddHours(2),
+            Expires = DateTime.UtcNow.Add(tempoExpiracao),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };

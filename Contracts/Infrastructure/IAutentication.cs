@@ -4,5 +4,5 @@ namespace HyperEfficient.Contracts.Infrastructure;
 
 public interface IAutentication
 {
-    string GenerateToken(UsuarioEntity usuarioEntity);
+    string GenerateToken(UsuarioEntity usuarioEntity, TimeSpan tempoExpiracao);
 }

@@ -27,25 +27,25 @@ public class UsuarioService : IUsuarioService
     {
         dto.Senha = GeneratePbkdf2Hash(dto.Senha);
         if (await _usuarioRepository.Insert(_map.Map<UsuarioEntity>(dto)) <= 0)
-            throw new KeyNotFoundException($"Não foi possível cadastrar o usuário {dto.Nome}!");
+            throw new KeyNotFoundException($"NÃ£o foi possÃ­vel cadastrar o usuÃ¡rio {dto.Nome}!");
 
-        return new MessageResponse { Message = "Usuário cadastrado com sucesso!" };
+        return new MessageResponse { Message = "UsuÃ¡rio cadastrado com sucesso!" };
     }
 
     public async Task<MessageResponse> Update(UsuarioEntity usuario)
     {
         if (await _usuarioRepository.Update(usuario) <= 0)
-            throw new KeyNotFoundException($"Não foi possível editar o usuário: {usuario.Nome}!");
+            throw new KeyNotFoundException($"NÃ£o foi possÃ­vel editar o usuÃ¡rio: {usuario.Nome}!");
 
-        return new MessageResponse { Message = "Usuário editado com sucesso!" };
+        return new MessageResponse { Message = "UsuÃ¡rio editado com sucesso!" };
     }
 
     public async Task<MessageResponse> Delete(int id)
     {
         if (await _usuarioRepository.Delete(id) <= 0)
-            throw new KeyNotFoundException($"Não foi encontrado nenhum Usuário com o id: {id}");
+            throw new KeyNotFoundException($"NÃ£o foi encontrado nenhum UsuÃ¡rio com o id: {id}");
 
-        return new MessageResponse { Message = "Usuário deletado com sucesso!" };
+        return new MessageResponse { Message = "UsuÃ¡rio deletado com sucesso!" };
     }
 
     public async Task<UsuarioGetAllResponse> GetAll()
@@ -56,18 +56,19 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioDto> GetById(int id)
     {
         return _map.Map<UsuarioDto?>(_usuarioRepository.GetById(id))
-            ?? throw new KeyNotFoundException("Usuário não encontrado!");
+            ?? throw new KeyNotFoundException("UsuÃ¡rio nÃ£o encontrado!");
     }
 
     public async Task<UsuarioLoginTokenDto> Login(UsuarioLoginDto usuarioLoginDto)
     {
         var usuario = await _usuarioRepository.GetByEmail(usuarioLoginDto.Email)
-                      ?? throw new InvalidCredentialsException("Usuário ou senha inválidos!");
+                      ?? throw new InvalidCredentialsException("UsuÃ¡rio ou senha invÃ¡lidos!");
 
         if (!VerifyPbkdf2Hash(usuarioLoginDto.Senha, usuario.Senha))
-            throw new InvalidCredentialsException("Usuário ou senha inválidos!");
+            throw new InvalidCredentialsException("UsuÃ¡rio ou senha invÃ¡lidos!");
 
-        var token = _autentication.GenerateToken(usuario);
+        var tempoExpiracao = usuarioLoginDto.LembrarDeMim ? TimeSpan.FromDays(30) : TimeSpan.FromHours(2);
+        var token = _autentication.GenerateToken(usuario, tempoExpiracao);
 
         return new UsuarioLoginTokenDto
         {
