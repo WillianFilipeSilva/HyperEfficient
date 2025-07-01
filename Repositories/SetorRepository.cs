@@ -31,7 +31,7 @@ public class SetorRepository : ISetorRepository
         var sql = @"
             UPDATE SETOR
                 SET GASTOGERAL = @GastoGeral,
-                    NOME = @Nome
+                    NOME = @Nome,
                     DESCRICAO = @Descricao
             WHERE ID = @Id";
 
@@ -48,7 +48,7 @@ public class SetorRepository : ISetorRepository
         var sql = $@"
             SELECT ID AS {nameof(SetorEntity.Id)},
                    GASTOGERAL AS {nameof(SetorEntity.GastoGeral)},
-                   NOME AS {nameof(SetorEntity.Nome)}
+                   NOME AS {nameof(SetorEntity.Nome)},
                    DESCRICAO AS {nameof(SetorEntity.Descricao)}
             FROM SETOR";
 
@@ -64,7 +64,7 @@ public class SetorRepository : ISetorRepository
         var sql = $@"
             SELECT ID AS {nameof(SetorEntity.Id)},
                    GASTOGERAL AS {nameof(SetorEntity.GastoGeral)},
-                   NOME AS {nameof(SetorEntity.Nome)}
+                   NOME AS {nameof(SetorEntity.Nome)},
                    DESCRICAO AS {nameof(SetorEntity.Descricao)}
             FROM SETOR
             LIMIT @pageSize OFFSET @offset";
@@ -77,7 +77,7 @@ public class SetorRepository : ISetorRepository
         var sql = $@"
             SELECT ID AS {nameof(SetorEntity.Id)},
                    GASTOGERAL AS {nameof(SetorEntity.GastoGeral)},
-                   NOME AS {nameof(SetorEntity.Nome)}
+                   NOME AS {nameof(SetorEntity.Nome)},
                    DESCRICAO AS {nameof(SetorEntity.Descricao)}
             FROM SETOR
             WHERE ID = @id";
