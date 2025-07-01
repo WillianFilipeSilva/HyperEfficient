@@ -2,6 +2,7 @@ using AutoMapper;
 using HyperEfficient.Contracts.Infrastructure;
 using HyperEfficient.Contracts.Repositories;
 using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.Base;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Dtos.Usuario;
 using HyperEfficient.Entities;
@@ -51,6 +52,22 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioGetAllResponse> GetAll()
     {
         return new UsuarioGetAllResponse { Data = await _usuarioRepository.GetAll() ?? new List<UsuarioEntity>() };
+    }
+
+    public async Task<GetPagedResponseBase<UsuarioDto>> GetPaged(int page, int pageSize)
+    {
+        var data = await _usuarioRepository.GetPaged(page, pageSize) ?? new List<UsuarioEntity>();
+        var allData = await _usuarioRepository.GetAll() ?? new List<UsuarioEntity>();
+        var totalItems = allData.Count();
+        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+        return new GetPagedResponseBase<UsuarioDto>
+        {
+            Data = _map.Map<IEnumerable<UsuarioDto>>(data),
+            Page = page,
+            PageSize = pageSize,
+            TotalPages = totalPages,
+            TotalItems = totalItems
+        };
     }
 
     public async Task<UsuarioDto> GetById(int id)

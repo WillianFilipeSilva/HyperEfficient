@@ -1,3 +1,4 @@
+using HyperEfficient.Dtos.Base;
 using HyperEfficient.Dtos.Equipamento;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Entities;
@@ -10,5 +11,6 @@ public interface IEquipamentoService
     Task<MessageResponse> Update(EquipamentoEntity equipamento);
     Task<MessageResponse> Delete(int id);
     Task<EquipamentoGetAllResponse> GetAll();
+    Task<GetPagedResponseBase<EquipamentoEntity>> GetPaged(int page, int pageSize);
     Task<EquipamentoEntity> GetById(int id);
 }

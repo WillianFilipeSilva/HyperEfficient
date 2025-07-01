@@ -1,4 +1,5 @@
 using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.Base;
 using HyperEfficient.Dtos.Equipamento;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Entities;
@@ -51,5 +52,12 @@ public class EquipamentoController : ControllerBase
     public async Task<ActionResult<EquipamentoEntity>> GetEquipamentoById(int id)
     {
         return Ok(await _equipamentoService.GetById(id));
+    }
+
+    [HttpGet("paged")]
+    [Authorize]
+    public async Task<ActionResult<GetPagedResponseBase<EquipamentoEntity>>> GetPagedEquipamentos([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        return Ok(await _equipamentoService.GetPaged(page, pageSize));
     }
 }

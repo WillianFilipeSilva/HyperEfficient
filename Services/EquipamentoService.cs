@@ -1,6 +1,7 @@
 using AutoMapper;
 using HyperEfficient.Contracts.Repositories;
 using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.Base;
 using HyperEfficient.Dtos.Equipamento;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Entities;
@@ -21,7 +22,7 @@ public class EquipamentoService : IEquipamentoService
     public async Task<MessageResponse> Insert(EquipamentoInsertDto dto)
     {
         if (await _equipamentoRepository.Insert(_map.Map<EquipamentoEntity>(dto)) <= 0)
-            throw new KeyNotFoundException($"N„o foi possÌvel cadastrar o equipamento {dto.Nome}!");
+            throw new KeyNotFoundException($"N√£o foi poss√≠vel cadastrar o equipamento {dto.Nome}!");
 
         return new MessageResponse { Message = "Equipamento cadastrado com sucesso!" };
     }
@@ -29,7 +30,7 @@ public class EquipamentoService : IEquipamentoService
     public async Task<MessageResponse> Update(EquipamentoEntity equipamento)
     {
         if (await _equipamentoRepository.Update(equipamento) <= 0)
-            throw new KeyNotFoundException($"N„o foi possÌvel editar o equipamento {equipamento.Nome}!");
+            throw new KeyNotFoundException($"N√£o foi poss√≠vel editar o equipamento {equipamento.Nome}!");
 
         return new MessageResponse { Message = "Equipamento editado com sucesso!" };
     }
@@ -37,7 +38,7 @@ public class EquipamentoService : IEquipamentoService
     public async Task<MessageResponse> Delete(int id)
     {
         if (await _equipamentoRepository.Delete(id) <= 0)
-            throw new KeyNotFoundException("N„o foi possÌvel deletar o equipamento!");
+            throw new KeyNotFoundException("N√£o foi poss√≠vel deletar o equipamento!");
 
         return new MessageResponse { Message = "Equipamento deletado com sucesso!" };
     }
@@ -47,9 +48,25 @@ public class EquipamentoService : IEquipamentoService
         return new EquipamentoGetAllResponse { Data = await _equipamentoRepository.GetAll() ?? new List<EquipamentoEntity>() };
     }
 
+    public async Task<GetPagedResponseBase<EquipamentoEntity>> GetPaged(int page, int pageSize)
+    {
+        var data = await _equipamentoRepository.GetPaged(page, pageSize) ?? new List<EquipamentoEntity>();
+        var allData = await _equipamentoRepository.GetAll() ?? new List<EquipamentoEntity>();
+        var totalItems = allData.Count();
+        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+        return new GetPagedResponseBase<EquipamentoEntity>
+        {
+            Data = data,
+            Page = page,
+            PageSize = pageSize,
+            TotalPages = totalPages,
+            TotalItems = totalItems
+        };
+    }
+
     public async Task<EquipamentoEntity> GetById(int id)
     {
         return await _equipamentoRepository.GetById(id)
-               ?? throw new KeyNotFoundException("Equipamento n„o encontrado!");
+               ?? throw new KeyNotFoundException("Equipamento n√£o encontrado!");
     }
 }

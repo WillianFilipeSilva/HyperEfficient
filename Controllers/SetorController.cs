@@ -1,4 +1,5 @@
 using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.Base;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Dtos.Setor;
 using HyperEfficient.Entities;
@@ -51,5 +52,12 @@ public class SetorController : ControllerBase
     public async Task<ActionResult<SetorEntity>> GetSetorById(int id)
     {
         return Ok(await _setorService.GetById(id));
+    }
+
+    [HttpGet("paged")]
+    [Authorize]
+    public async Task<ActionResult<GetPagedResponseBase<SetorEntity>>> GetPagedSetores([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        return Ok(await _setorService.GetPaged(page, pageSize));
     }
 }

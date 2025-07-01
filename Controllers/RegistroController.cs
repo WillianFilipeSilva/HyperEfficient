@@ -1,4 +1,5 @@
 using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.Base;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Dtos.Registro;
 using HyperEfficient.Entities;
@@ -51,5 +52,12 @@ public class RegistroController : ControllerBase
     public async Task<ActionResult<RegistroEntity>> GetRegistroById(int id)
     {
         return Ok(await _registroService.GetById(id));
+    }
+
+    [HttpGet("paged")]
+    [Authorize]
+    public async Task<ActionResult<GetPagedResponseBase<RegistroEntity>>> GetPagedRegistros([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        return Ok(await _registroService.GetPaged(page, pageSize));
     }
 }

@@ -1,4 +1,5 @@
 using HyperEfficient.Contracts.Services;
+using HyperEfficient.Dtos.Base;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Dtos.Usuario;
 using HyperEfficient.Entities;
@@ -65,5 +66,12 @@ public class UsuarioController : ControllerBase
     public async Task<ActionResult> HandShake()
     {
         return Ok(new { });
+    }
+
+    [HttpGet("paged")]
+    [Authorize]
+    public async Task<ActionResult<GetPagedResponseBase<UsuarioDto>>> GetPagedUsuarios([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        return Ok(await _usuarioService.GetPaged(page, pageSize));
     }
 }
