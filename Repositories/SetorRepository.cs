@@ -19,7 +19,8 @@ public class SetorRepository : ISetorRepository
             INSERT INTO SETOR (GASTOGERAL, NOME)
                 VALUES (
                     @GastoGeral,
-                    @Nome
+                    @Nome,
+                    @Descricao
                 );";
 
         return await _connection.ExecuteAsync(sql, setor);
@@ -31,6 +32,7 @@ public class SetorRepository : ISetorRepository
             UPDATE SETOR
                 SET GASTOGERAL = @GastoGeral,
                     NOME = @Nome
+                    DESCRICAO = @Descricao
             WHERE ID = @Id";
 
         return await _connection.ExecuteAsync(sql, setor);
@@ -47,6 +49,7 @@ public class SetorRepository : ISetorRepository
             SELECT ID AS {nameof(SetorEntity.Id)},
                    GASTOGERAL AS {nameof(SetorEntity.GastoGeral)},
                    NOME AS {nameof(SetorEntity.Nome)}
+                   DESCRICAO AS {nameof(SetorEntity.Descricao)}
             FROM SETOR";
 
         return await _connection.ExecuteQueryAsync<SetorEntity>(sql);
@@ -62,6 +65,7 @@ public class SetorRepository : ISetorRepository
             SELECT ID AS {nameof(SetorEntity.Id)},
                    GASTOGERAL AS {nameof(SetorEntity.GastoGeral)},
                    NOME AS {nameof(SetorEntity.Nome)}
+                   DESCRICAO AS {nameof(SetorEntity.Descricao)}
             FROM SETOR
             LIMIT @pageSize OFFSET @offset";
 
@@ -74,6 +78,7 @@ public class SetorRepository : ISetorRepository
             SELECT ID AS {nameof(SetorEntity.Id)},
                    GASTOGERAL AS {nameof(SetorEntity.GastoGeral)},
                    NOME AS {nameof(SetorEntity.Nome)}
+                   DESCRICAO AS {nameof(SetorEntity.Descricao)}
             FROM SETOR
             WHERE ID = @id";
 

@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS `Setor` (
   `Id`          INT NOT NULL AUTO_INCREMENT,
   `GastoGeral`  DECIMAL(10,2) NULL,
   `Nome`   VARCHAR(100)   NULL,
+  `Descricao`   VARCHAR(300) NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB;
 
