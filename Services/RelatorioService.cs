@@ -1,5 +1,5 @@
 ﻿using HyperEfficient.Contracts.Infrastructure;
-using HyperEfficient.Contracts.Service;
+using HyperEfficient.Contracts.Services;
 using HyperEfficient.Dtos.Relatorios;
 
 namespace HyperEfficient.Services;

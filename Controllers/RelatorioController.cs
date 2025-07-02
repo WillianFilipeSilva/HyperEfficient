@@ -1,4 +1,4 @@
-﻿using HyperEfficient.Contracts.Service;
+﻿using HyperEfficient.Contracts.Services;
 using HyperEfficient.Dtos.Relatorios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

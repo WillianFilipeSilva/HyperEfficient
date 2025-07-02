@@ -1,5 +1,5 @@
 using HyperEfficient.Contracts.Infrastructure;
-using HyperEfficient.Contracts.Service;
+using HyperEfficient.Contracts.Services;
 using HyperEfficient.Infrastructure.Autentication;
 using HyperEfficient.Infrastructure.Connection;
 using HyperEfficient.Infrastructure.Extensions;

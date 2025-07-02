@@ -16,7 +16,7 @@ public class SetorRepository : ISetorRepository
     public async Task<int> Insert(SetorEntity setor)
     {
         var sql = @"
-            INSERT INTO SETOR (GASTOGERAL, NOME)
+            INSERT INTO SETOR (GASTOGERAL, NOME, DESCRICAO)
                 VALUES (
                     @GastoGeral,
                     @Nome,
