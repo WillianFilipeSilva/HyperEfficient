@@ -74,6 +74,9 @@ public class ErrorHandlingMiddleware
         _log.LogError(exception, "Exception: {Message} | StatusCode: {StatusCode}",
             exception.Message, errorResponse.StatusCode);
 
+        // Log customizado em arquivo
+        await Logger.LogError($"Exception: {exception.Message} | StatusCode: {errorResponse.StatusCode}\nStackTrace: {exception.StackTrace}");
+
         response.StatusCode = errorResponse.StatusCode;
 
         var jsonResponse = JsonSerializer.Serialize(errorResponse, new JsonSerializerOptions
