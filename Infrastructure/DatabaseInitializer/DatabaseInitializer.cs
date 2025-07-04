@@ -2,28 +2,29 @@
 using HyperEfficient.Contracts.Infrastructure;
 using MySqlConnector;
 
-namespace HyperEfficient.Infrastructure.DatabaseInitializer;
-
-public static class DatabaseInitializer
+namespace HyperEfficient.Infrastructure.DatabaseInitializer
 {
-    public static void EnsureDatabaseAndTablesCreated(IConnection connection, IConfiguration configuration)
+    public static class DatabaseInitializer
     {
-        var builder = new MySqlConnectionStringBuilder(
-            configuration.GetConnectionString("Default")
-            ?? throw new ArgumentException("Não foi encontrada a string de conexão com o banco no seu AppSettings!")
-        );
-        builder.Database = "";
-
-        var script = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "CreateSQL.txt"));
-        using (var con = new MySqlConnection(builder.ConnectionString))
+        public static void EnsureDatabaseAndTablesCreated(IConnection connection, IConfiguration configuration)
         {
-            con.Open();
-            foreach (var cmd in script.Split(';'))
+            MySqlConnectionStringBuilder builder = new(configuration.GetConnectionString("Default") ?? throw new ArgumentException("Não foi encontrada a string de conexão com o banco no seu AppSettings!"));
+            builder.Database = "";
+
+            string script = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "CreateSQL.txt"));
+
+            using (MySqlConnection con = new(builder.ConnectionString))
             {
-                var trimmed = cmd.Trim();
-                if (!string.IsNullOrWhiteSpace(trimmed))
+                con.Open();
+
+                foreach (string cmd in script.Split(';'))
                 {
-                    con.Execute(trimmed);
+                    string trimmed = cmd.Trim();
+
+                    if (!string.IsNullOrWhiteSpace(trimmed))
+                    {
+                        con.Execute(trimmed);
+                    }
                 }
             }
         }

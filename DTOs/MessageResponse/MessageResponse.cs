@@ -1,6 +1,7 @@
-﻿namespace HyperEfficient.Dtos.MessageResponse;
-
-public class MessageResponse
+﻿namespace HyperEfficient.Dtos.MessageResponse
 {
-    public string Message { get; set; }
+    public class MessageResponse
+    {
+        public string Message { get; set; }
+    }
 }

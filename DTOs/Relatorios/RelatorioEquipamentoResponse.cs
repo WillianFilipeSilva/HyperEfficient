@@ -1,10 +1,11 @@
-﻿namespace HyperEfficient.Dtos.Relatorios;
-
-public class RelatorioEquipamentoResponse
+﻿namespace HyperEfficient.Dtos.Relatorios
 {
-    public int EquipamentoId { get; set; }
-    public string NomeEquipamento { get; set; }
-    public decimal TempoUsoTotal { get; set; }
-    public decimal GastoEnergeticoTotal { get; set; }
-    public bool Ativo { get; set; }
+    public class RelatorioEquipamentoResponse
+    {
+        public int EquipamentoId { get; set; }
+        public string NomeEquipamento { get; set; }
+        public decimal TempoUsoTotal { get; set; }
+        public decimal GastoEnergeticoTotal { get; set; }
+        public bool Ativo { get; set; }
+    }
 }

@@ -1,8 +1,9 @@
 using HyperEfficient.Entities.Base;
 
-namespace HyperEfficient.Entities;
-
-public class CategoriaEntity : EntityBase
+namespace HyperEfficient.Entities
 {
-    public string Nome { get; set; }
+    public class CategoriaEntity : EntityBase
+    {
+        public string Nome { get; set; }
+    }
 }

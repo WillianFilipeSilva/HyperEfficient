@@ -1,12 +1,13 @@
 using MySqlConnector;
 
-namespace HyperEfficient.Contracts.Infrastructure;
-
-public interface IConnection
+namespace HyperEfficient.Contracts.Infrastructure
 {
-    MySqlConnection GetConnection();
-    Task<int> ExecuteAsync(string sql, object obj);
-    Task<IEnumerable<T>> ExecuteQueryAsync<T>(string sql, object? param = null);
-    Task<T?> ExecuteQueryFirstAsync<T>(string sql, object param);
-    Task<T> ExecuteScalarAsync<T>(string sql, object param);
+    public interface IConnection
+    {
+        MySqlConnection GetConnection();
+        Task<int> ExecuteAsync(string sql, object obj);
+        Task<IEnumerable<T>> ExecuteQueryAsync<T>(string sql, object? param = null);
+        Task<T?> ExecuteQueryFirstAsync<T>(string sql, object param);
+        Task<T> ExecuteScalarAsync<T>(string sql, object param);
+    }
 }

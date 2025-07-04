@@ -2,12 +2,13 @@
 using HyperEfficient.Dtos.Registro;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Infrastructure.Mapping;
-
-public class RegistroProfile : Profile
+namespace HyperEfficient.Infrastructure.Mapping
 {
-    public RegistroProfile()
+    public class RegistroProfile : Profile
     {
-        CreateMap<RegistroInsertDto, RegistroEntity>();
+        public RegistroProfile()
+        {
+            CreateMap<RegistroInsertDto, RegistroEntity>();
+        }
     }
 }

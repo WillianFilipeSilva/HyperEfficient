@@ -1,7 +1,8 @@
-﻿namespace HyperEfficient.Dtos.Usuario;
-
-public class UsuarioLoginTokenDto
+﻿namespace HyperEfficient.Dtos.Usuario
 {
-    public string Token { get; set; }
-    public UsuarioDto Usuario { get; set; }
+    public class UsuarioLoginTokenDto
+    {
+        public string Token { get; set; }
+        public UsuarioDto Usuario { get; set; }
+    }
 }

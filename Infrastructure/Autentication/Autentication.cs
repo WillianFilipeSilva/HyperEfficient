@@ -1,38 +1,30 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using HyperEfficient.Contracts.Infrastructure;
+﻿using HyperEfficient.Contracts.Infrastructure;
 using HyperEfficient.Entities;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
-namespace HyperEfficient.Infrastructure.Autentication;
-
-public class Autentication : IAutentication
+namespace HyperEfficient.Infrastructure.Autentication
 {
-    private readonly IConfiguration _configuration;
-
-    public Autentication(IConfiguration configuration)
+    public class Autentication : IAutentication
     {
-        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-    }
+        private readonly IConfiguration _configuration;
 
-    public string GenerateToken(UsuarioEntity usuarioEntity, TimeSpan tempoExpiracao)
-    {
-        var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
-        var tokenDescriptor = new SecurityTokenDescriptor
+        public Autentication(IConfiguration configuration)
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.Name, usuarioEntity.Nome),
-                new Claim(ClaimTypes.Email, usuarioEntity.Email)
-            }),
-            Expires = DateTime.UtcNow.Add(tempoExpiracao),
-            SigningCredentials =
-                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        }
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        public string GenerateToken(UsuarioEntity usuarioEntity, TimeSpan tempoExpiracao)
+        {
+            byte[] key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
+            SecurityTokenDescriptor tokenDescriptor = new() { Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, usuarioEntity.Nome), new Claim(ClaimTypes.Email, usuarioEntity.Email) }), Expires = DateTime.UtcNow.Add(tempoExpiracao), SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature) };
+
+            JwtSecurityTokenHandler tokenHandler = new();
+            SecurityToken? token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
+        }
     }
 }

@@ -1,94 +1,61 @@
 ﻿using System.Net;
 using System.Text.Json;
 
-namespace HyperEfficient.Infrastructure.Middleware;
-
-public class ErrorHandlingMiddleware
+namespace HyperEfficient.Infrastructure.Middleware
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ErrorHandlingMiddleware> _log;
-
-    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> log)
+    public class ErrorHandlingMiddleware
     {
-        _next = next;
-        _log = log;
-    }
+        private readonly ILogger<ErrorHandlingMiddleware> _log;
+        private readonly RequestDelegate _next;
 
-    public async Task Invoke(HttpContext context)
-    {
-        try
+        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> log)
         {
-            await _next(context);
+            _next = next;
+            _log = log;
         }
-        catch (Exception ex)
-        {
-            await HandleExceptionAsync(context, ex);
-        }
-    }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
-    {
-        var response = context.Response;
-        response.ContentType = "application/json";
-
-        var errorResponse = exception switch
+        public async Task Invoke(HttpContext context)
         {
-            InvalidCredentialsException => new ErrorResponse
+            try
             {
-                StatusCode = (int)HttpStatusCode.Unauthorized,
-                Message = exception.Message,
-                Details = "Credenciais inválidas"
-            },
-            KeyNotFoundException => new ErrorResponse
-            {
-                StatusCode = (int)HttpStatusCode.NotFound,
-                Message = exception.Message,
-                Details = "Recurso não encontrado"
-            },
-            ArgumentException => new ErrorResponse
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-                Message = exception.Message,
-                Details = "Parâmetros inválidos"
-            },
-            UnauthorizedAccessException => new ErrorResponse
-            {
-                StatusCode = (int)HttpStatusCode.Unauthorized,
-                Message = "Acesso não autorizado",
-                Details = "Token inválido ou expirado"
-            },
-            InvalidOperationException => new ErrorResponse
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-                Message = exception.Message,
-                Details = "Operação inválida"
-            },
-            _ => new ErrorResponse
-            {
-                StatusCode = (int)HttpStatusCode.InternalServerError,
-                Message = "Ocorreu um erro interno no servidor",
-                Details = "Tente novamente mais tarde"
+                await _next(context);
             }
-        };
+            catch (Exception ex)
+            {
+                await HandleExceptionAsync(context, ex);
+            }
+        }
 
-        _log.LogError(exception, "Exception: {Message} | StatusCode: {StatusCode}",
-            exception.Message, errorResponse.StatusCode);
-
-        // Log customizado em arquivo
-        await Logger.LogError($"Exception: {exception.Message} | StatusCode: {errorResponse.StatusCode}\nStackTrace: {exception.StackTrace}");
-
-        response.StatusCode = errorResponse.StatusCode;
-
-        var jsonResponse = JsonSerializer.Serialize(errorResponse, new JsonSerializerOptions
+        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        });
+            HttpResponse response = context.Response;
+            response.ContentType = "application/json";
 
-        await response.WriteAsync(jsonResponse);
+            ErrorResponse errorResponse = exception switch
+            {
+                InvalidCredentialsException => new ErrorResponse { StatusCode = (int)HttpStatusCode.Unauthorized, Message = exception.Message, Details = "Credenciais inválidas" },
+                KeyNotFoundException => new ErrorResponse { StatusCode = (int)HttpStatusCode.NotFound, Message = exception.Message, Details = "Recurso não encontrado" },
+                ArgumentException => new ErrorResponse { StatusCode = (int)HttpStatusCode.BadRequest, Message = exception.Message, Details = "Parâmetros inválidos" },
+                UnauthorizedAccessException => new ErrorResponse { StatusCode = (int)HttpStatusCode.Unauthorized, Message = "Acesso não autorizado", Details = "Token inválido ou expirado" },
+                InvalidOperationException => new ErrorResponse { StatusCode = (int)HttpStatusCode.BadRequest, Message = exception.Message, Details = "Operação inválida" },
+                _ => new ErrorResponse { StatusCode = (int)HttpStatusCode.InternalServerError, Message = "Ocorreu um erro interno no servidor", Details = "Tente novamente mais tarde" }
+            };
+
+            _log.LogError(exception, "Exception: {Message} | StatusCode: {StatusCode}", exception.Message, errorResponse.StatusCode);
+
+            // Log customizado em arquivo
+            await Logger.LogError($"Exception: {exception.Message} | StatusCode: {errorResponse.StatusCode}\nStackTrace: {exception.StackTrace}");
+
+            response.StatusCode = errorResponse.StatusCode;
+
+            string jsonResponse = JsonSerializer.Serialize(errorResponse, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+            await response.WriteAsync(jsonResponse);
+        }
     }
-}
 
-public class InvalidCredentialsException : Exception
-{
-    public InvalidCredentialsException(string message) : base(message) { }
+    public class InvalidCredentialsException : Exception
+    {
+        public InvalidCredentialsException(string message) : base(message) { }
+    }
 }

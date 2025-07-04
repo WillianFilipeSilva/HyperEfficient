@@ -1,12 +1,13 @@
 using HyperEfficient.Entities.Base;
 
-namespace HyperEfficient.Entities;
-
-public class SetorEntity : EntityBase
+namespace HyperEfficient.Entities
 {
-    public decimal GastoGeral { get; set; }
+    public class SetorEntity : EntityBase
+    {
+        public decimal GastoGeral { get; set; }
 
-    public string Nome { get; set; }
+        public string Nome { get; set; }
 
-    public string Descricao { get; set; }
+        public string Descricao { get; set; }
+    }
 }

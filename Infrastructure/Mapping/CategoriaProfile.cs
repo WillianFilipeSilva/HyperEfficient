@@ -2,12 +2,13 @@
 using HyperEfficient.Dtos.Categoria;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Infrastructure.Mapping;
-
-public class CategoriaProfile : Profile
+namespace HyperEfficient.Infrastructure.Mapping
 {
-    public CategoriaProfile()
+    public class CategoriaProfile : Profile
     {
-        CreateMap<CategoriaInsertDto, CategoriaEntity>();
+        public CategoriaProfile()
+        {
+            CreateMap<CategoriaInsertDto, CategoriaEntity>();
+        }
     }
 }

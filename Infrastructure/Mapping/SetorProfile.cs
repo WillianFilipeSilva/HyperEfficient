@@ -2,12 +2,13 @@
 using HyperEfficient.Dtos.Setor;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Infrastructure.Mapping;
-
-public class SetorProfile : Profile
+namespace HyperEfficient.Infrastructure.Mapping
 {
-    public SetorProfile()
+    public class SetorProfile : Profile
     {
-        CreateMap<SetorInsertDto, SetorEntity>();
+        public SetorProfile()
+        {
+            CreateMap<SetorInsertDto, SetorEntity>();
+        }
     }
 }

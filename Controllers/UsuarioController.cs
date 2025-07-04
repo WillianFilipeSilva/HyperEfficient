@@ -6,72 +6,73 @@ using HyperEfficient.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HyperEfficient.Controllers;
-
-[ApiController]
-[Route("usuarios")]
-public class UsuarioController : ControllerBase
+namespace HyperEfficient.Controllers
 {
-    private readonly IUsuarioService _usuarioService;
-
-    public UsuarioController(IUsuarioService usuarioService)
+    [ApiController]
+    [Route("usuarios")]
+    public class UsuarioController : ControllerBase
     {
-        _usuarioService = usuarioService;
-    }
+        private readonly IUsuarioService _usuarioService;
 
-    [HttpPost]
-    [AllowAnonymous]
-    public async Task<ActionResult<MessageResponse>> InsertUsuario([FromBody] UsuarioInsertDto usuario)
-    {
-        return Ok(await _usuarioService.Insert(usuario));
-    }
+        public UsuarioController(IUsuarioService usuarioService)
+        {
+            _usuarioService = usuarioService;
+        }
 
-    [HttpPut]
-    [Authorize]
-    public async Task<ActionResult<MessageResponse>> UpdateUsuario([FromBody] UsuarioEntity usuario)
-    {
-        return Ok(await _usuarioService.Update(usuario));
-    }
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult<MessageResponse>> InsertUsuario([FromBody] UsuarioInsertDto usuario)
+        {
+            return Ok(await _usuarioService.Insert(usuario));
+        }
 
-    [HttpDelete("{id}")]
-    [Authorize]
-    public async Task<ActionResult<MessageResponse>> DeleteUsuario(int id)
-    {
-        return Ok(await _usuarioService.Delete(id));
-    }
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult<MessageResponse>> UpdateUsuario([FromBody] UsuarioEntity usuario)
+        {
+            return Ok(await _usuarioService.Update(usuario));
+        }
 
-    [HttpGet]
-    [Authorize]
-    public async Task<ActionResult<UsuarioGetAllResponse>> GetAllUsuarios()
-    {
-        return Ok(await _usuarioService.GetAll());
-    }
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult<MessageResponse>> DeleteUsuario(int id)
+        {
+            return Ok(await _usuarioService.Delete(id));
+        }
 
-    [HttpGet("{id}")]
-    [Authorize]
-    public async Task<ActionResult<UsuarioDto>> GetUsuarioById(int id)
-    {
-        return Ok(await _usuarioService.GetById(id));
-    }
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<UsuarioGetAllResponse>> GetAllUsuarios()
+        {
+            return Ok(await _usuarioService.GetAll());
+        }
 
-    [HttpPost("login")]
-    [AllowAnonymous]
-    public async Task<ActionResult<UsuarioLoginTokenDto>> Login([FromBody] UsuarioLoginDto usuario)
-    {
-        return Ok(await _usuarioService.Login(usuario));
-    }
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<ActionResult<UsuarioDto>> GetUsuarioById(int id)
+        {
+            return Ok(await _usuarioService.GetById(id));
+        }
 
-    [HttpGet("handshake")]
-    [Authorize]
-    public async Task<ActionResult> HandShake()
-    {
-        return Ok(new { });
-    }
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<ActionResult<UsuarioLoginTokenDto>> Login([FromBody] UsuarioLoginDto usuario)
+        {
+            return Ok(await _usuarioService.Login(usuario));
+        }
 
-    [HttpGet("paged")]
-    [Authorize]
-    public async Task<ActionResult<GetPagedResponseBase<UsuarioDto>>> GetPagedUsuarios([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
-    {
-        return Ok(await _usuarioService.GetPaged(page, pageSize));
+        [HttpGet("handshake")]
+        [Authorize]
+        public async Task<ActionResult> HandShake()
+        {
+            return Ok(new { });
+        }
+
+        [HttpGet("paged")]
+        [Authorize]
+        public async Task<ActionResult<GetPagedResponseBase<UsuarioDto>>> GetPagedUsuarios([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            return Ok(await _usuarioService.GetPaged(page, pageSize));
+        }
     }
 }

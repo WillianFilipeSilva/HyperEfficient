@@ -1,9 +1,10 @@
 using HyperEfficient.Contracts.Repositories.Base;
 using HyperEfficient.Entities;
 
-namespace HyperEfficient.Contracts.Repositories;
-
-public interface IRegistroRepository : IRepositoryBase<RegistroEntity>
+namespace HyperEfficient.Contracts.Repositories
 {
-    Task<IEnumerable<RegistroEntity>> GetPaged(int page, int pageSize);
+    public interface IRegistroRepository : IRepositoryBase<RegistroEntity>
+    {
+        Task<IEnumerable<RegistroEntity>> GetPaged(int page, int pageSize);
+    }
 }

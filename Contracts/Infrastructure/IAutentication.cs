@@ -1,8 +1,9 @@
 ﻿using HyperEfficient.Entities;
 
-namespace HyperEfficient.Contracts.Infrastructure;
-
-public interface IAutentication
+namespace HyperEfficient.Contracts.Infrastructure
 {
-    string GenerateToken(UsuarioEntity usuarioEntity, TimeSpan tempoExpiracao);
+    public interface IAutentication
+    {
+        string GenerateToken(UsuarioEntity usuarioEntity, TimeSpan tempoExpiracao);
+    }
 }
