@@ -41,10 +41,7 @@ namespace HyperEfficient.Infrastructure.Middleware
                 _ => new ErrorResponse { StatusCode = (int)HttpStatusCode.InternalServerError, Message = "Ocorreu um erro interno no servidor", Details = "Tente novamente mais tarde" }
             };
 
-            _log.LogError(exception, "Exception: {Message} | StatusCode: {StatusCode}", exception.Message, errorResponse.StatusCode);
-
-            // Log customizado em arquivo
-            await Logger.LogError($"Exception: {exception.Message} | StatusCode: {errorResponse.StatusCode}\nStackTrace: {exception.StackTrace}");
+            _log.LogError($"Exception: {exception.Message} | StatusCode: {errorResponse.StatusCode}\nStackTrace: {exception.StackTrace}");
 
             response.StatusCode = errorResponse.StatusCode;
 
