@@ -1,110 +1,124 @@
-HyperEfficient
+# ⚡ HyperEfficient - Backend
+
 Sistema web API para gestão de consumo e custos de energia elétrica de equipamentos industriais.
+
 Permite cadastrar setores, categorias e equipamentos, registrar períodos de uso e extrair relatórios de gasto energético.
 
-✨ Funcionalidades já implementadas
-Módulo	Operações
-Equipamento	CRUD completo + busca/ordenação por diversos critérios EquipamentoRepository
-Setor	CRUD completo SetorRepository
-Categoria	CRUD completo CategoriaRepository
-Registro	CRUD para período de uso do equipamento RegistroRepository
-Usuário	CRUD básico de usuários (para expansão futura de permissões) UsuarioRepository
-Relatórios	Endpoints prontos para sumarizar consumo (serão expandidos a gráficos)
+---
 
-Pronto para alertas automáticos (detecção de excesso/ociosidade) e exportação PDF/Excel em versões futuras.
+## ✨ Funcionalidades
 
-🏗️ Arquitetura
-ASP.NET Core 7 Web API
+| Módulo      | Operações                                                                                  |
+|-------------|--------------------------------------------------------------------------------------------|
+| Equipamento | CRUD completo, busca/ordenação por critérios (EquipamentoRepository)                        |
+| Setor       | CRUD completo (SetorRepository)                                                            |
+| Categoria   | CRUD completo (CategoriaRepository)                                                        |
+| Registro    | CRUD para períodos de uso do equipamento (RegistroRepository)                              |
+| Usuário     | CRUD básico de usuários (expansão futura para permissões) (UsuarioRepository)              |
+| Relatórios  | Endpoints para sumarizar consumo (expansão futura para gráficos)                           |
 
-Dapper como micro-ORM para acesso MySQL Connection
+> **Pronto para:**  
+> - Alertas automáticos (excesso/ociosidade)  
+> - Exportação PDF/Excel (futuro)
 
-AutoMapper para mapear DTO ⇆ Entidades
+---
 
-Injeção de dependência automática por reflexão:
+## 🏗️ Arquitetura
 
-AddCamadaInfra() registra todos os Repositories
+- **Framework:** ASP.NET Core 7 Web API
+- **ORM:** Dapper (micro-ORM, MySQL)
+- **Mapper:** AutoMapper (DTO ⇆ Entidades)
+- **Injeção de Dependência:** Automática por reflexão
+- **Padrão:** Domain Driven Design (DDD)
 
-AddCamadaAplicacao() registra todos os Services ServiceCollectionExtens…
+### Camadas
 
-Camadas
+- `Contracts/` – Interfaces de Repository & Service
+- `Controllers/` – APIs REST
+- `Dtos/` – Data Transfer Objects
+- `Entities/` – Modelos de domínio
+- `Infrastructure/` – Connection, DI, Mappings, Middleware, Criptografia, etc.
+- `Repositories/` – Implementações Dapper
+- `Services/` – Regras de negócio
 
-Contracts – interfaces
+---
 
-Entity – modelos de domínio
+## 🗄️ Banco de Dados
 
-Repository – acesso a dados
+- **Script:** `CreateSQL.txt`  
+  Cria o schema `hyperefficient` e todas as FKs necessárias.
 
-Service – regra de negócio
-
-Controllers – endpoints REST
-
-Infrastructure – Connection, DI extensions, Mappings
-
-🗄️ Banco de dados
-Script completo em CreateSQL.txt cria schema hyperefficient e todas as FK necessárias. CreateSQL
-
-bash
-Copiar
-Editar
+```bash
 mysql -u root -p < CreateSQL.txt
-🚀 Execução local
-bash
-Copiar
-Editar
-# 1. clone
+```
+
+---
+
+## 🚀 Execução Local
+
+```bash
+# 1. Clone o repositório
 git clone https://github.com/<sua-org>/HyperEfficient.git
 cd HyperEfficient
 
-# 2. ajuste a connection string (se necessário)
-#    Infraestructure/Connection/Connection.cs
+# 2. Ajuste a connection string (se necessário)
+#    Infrastructure/Connection/Connection.cs
 
-# 3. restaure pacotes e rode
+# 3. Restaure pacotes e rode
 dotnet restore
 dotnet run
-API sobe em https://localhost:5001.
+```
 
-Documentação interativa via Swagger UI em /swagger. Program
+- API disponível em: `https://localhost:5001`
+- Documentação interativa: `/swagger`
 
-🔌 Endpoints principais
-Verbo	Rota	Descrição
-GET	/equipamentos	Listar equipamentos
-POST	/equipamentos	Cadastrar equipamento
-PUT	/equipamentos	Atualizar equipamento
-...	...	idem para setores, categorias, registros, usuarios
+---
 
-(Códigos nos controllers correspondentes)
+## 🔌 Endpoints Principais
 
-🛠️ Estrutura de diretórios
-bash
-Copiar
-Editar
+| Verbo | Rota           | Descrição                |
+|-------|----------------|-------------------------|
+| GET   | /equipamentos  | Listar equipamentos     |
+| POST  | /equipamentos  | Cadastrar equipamento   |
+| PUT   | /equipamentos  | Atualizar equipamento   |
+| ...   | ...            | Idem para outros módulos|
+
+> Veja os controllers para detalhes completos.
+
+---
+
+## 🗂️ Estrutura de Diretórios
+
+```
 HyperEfficient/
- ├─ Contracts/          # Interfaces de Repository & Service
+ ├─ Contracts/          # Interfaces
  ├─ Controllers/        # APIs REST
- ├─ DTO/                # Data-transfer objects
- ├─ Entity/             # Entidades de domínio
- ├─ Infrastructure/
- │   ├─ Connection/     # MySQL Dapper helper
- │   └─ Extensions/     # Registro automático de DI
- ├─ Repository/         # Implementações Dapper
- ├─ Response/           # Modelos de resposta padrão
+ ├─ Dtos/               # Data Transfer Objects
+ ├─ Entities/           # Entidades de domínio
+ ├─ Infrastructure/     # Infraestrutura técnica
+ ├─ Repositories/       # Implementações Dapper
  ├─ Services/           # Regras de negócio
  ├─ CreateSQL.txt       # Script do banco
  └─ Program.cs          # Bootstrap da aplicação
-📈 Roadmap breve
-Alertas automáticos de excesso/ociosidade (+20 % / <15 %) enviados por e-mail ou push.
+```
 
-Exportação de relatórios (PDF / Excel).
+---
 
-Autenticação e permissões por usuário.
+## 📈 Roadmap
 
-Integração com sensores IoT para leitura em tempo real.
+- [ ] Alertas automáticos de excesso/ociosidade (+20% / <15%) por e-mail/push
+- [ ] Exportação de relatórios (PDF/Excel)
+- [ ] Autenticação e permissões por usuário
+- [ ] Integração com sensores IoT para leitura em tempo real
 
-🤝 Contribuindo
-Fork o repositório e crie sua branch: feature/nome-funcionalidade.
+---
 
-Abra pull request pequeno e objetivo.
+## 🤝 Contribuindo
 
-Siga o padrão Clean Code usado no projeto.
+1. Faça um fork e crie sua branch: `feature/nome-funcionalidade`
+2. Abra um pull request pequeno e objetivo
+3. Siga o padrão Clean Code do projeto
+
+---
 
 Feito com 💡 e ☕ pela equipe HyperEfficient.
