@@ -27,7 +27,7 @@ namespace HyperEfficient.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<MessageResponse>> UpdateCategoria([FromBody] CategoriaEntity categoria)
+        public async Task<ActionResult<MessageResponse>> UpdateCategoria([FromBody] Categoria categoria)
         {
             return Ok(await _categoriaService.Update(categoria));
         }
@@ -48,7 +48,7 @@ namespace HyperEfficient.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<CategoriaEntity>> GetCategoriaById(int id)
+        public async Task<ActionResult<Categoria>> GetCategoriaById(int id)
         {
             return Ok(await _categoriaService.GetById(id));
         }

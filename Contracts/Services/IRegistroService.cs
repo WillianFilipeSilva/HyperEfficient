@@ -8,10 +8,10 @@ namespace HyperEfficient.Contracts.Services
     public interface IRegistroService
     {
         Task<MessageResponse> Insert(RegistroInsertDto equipamento);
-        Task<MessageResponse> Update(RegistroEntity equipamento);
+        Task<MessageResponse> Update(Registro equipamento);
         Task<MessageResponse> Delete(int id);
         Task<RegistroGetAllResponse> GetAll();
-        Task<GetPagedResponseBase<RegistroEntity>> GetPaged(int page, int pageSize);
-        Task<RegistroEntity> GetById(int id);
+        Task<GetPagedResponseBase<Registro>> GetPaged(int page, int pageSize);
+        Task<Registro> GetById(int id);
     }
 }

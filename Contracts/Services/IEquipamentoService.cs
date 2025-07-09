@@ -8,10 +8,10 @@ namespace HyperEfficient.Contracts.Services
     public interface IEquipamentoService
     {
         Task<MessageResponse> Insert(EquipamentoInsertDto equipamento);
-        Task<MessageResponse> Update(EquipamentoEntity equipamento);
+        Task<MessageResponse> Update(Equipamento equipamento);
         Task<MessageResponse> Delete(int id);
         Task<EquipamentoGetAllResponse> GetAll();
-        Task<GetPagedResponseBase<EquipamentoEntity>> GetPaged(int page, int pageSize);
-        Task<EquipamentoEntity> GetById(int id);
+        Task<GetPagedResponseBase<Equipamento>> GetPaged(int page, int pageSize);
+        Task<Equipamento> GetById(int id);
     }
 }

@@ -8,7 +8,7 @@ namespace HyperEfficient.Contracts.Services
     public interface IUsuarioService
     {
         Task<MessageResponse> Insert(UsuarioInsertDto usuario);
-        Task<MessageResponse> Update(UsuarioEntity usuario);
+        Task<MessageResponse> Update(Usuario usuario);
         Task<MessageResponse> Delete(int id);
         Task<UsuarioGetAllResponse> GetAll();
         Task<GetPagedResponseBase<UsuarioDto>> GetPaged(int page, int pageSize);

@@ -28,7 +28,7 @@ namespace HyperEfficient.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<MessageResponse>> UpdateRegistro([FromBody] RegistroEntity registro)
+        public async Task<ActionResult<MessageResponse>> UpdateRegistro([FromBody] Registro registro)
         {
             return Ok(await _registroService.Update(registro));
         }
@@ -49,14 +49,16 @@ namespace HyperEfficient.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<RegistroEntity>> GetRegistroById(int id)
+        public async Task<ActionResult<Registro>> GetRegistroById(int id)
         {
             return Ok(await _registroService.GetById(id));
         }
 
         [HttpGet("paged")]
         [Authorize]
-        public async Task<ActionResult<GetPagedResponseBase<RegistroEntity>>> GetPagedRegistros([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<GetPagedResponseBase<Registro>>> GetPagedRegistros([FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10
+        )
         {
             return Ok(await _registroService.GetPaged(page, pageSize));
         }

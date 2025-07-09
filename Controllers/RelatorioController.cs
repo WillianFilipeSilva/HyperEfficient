@@ -18,21 +18,27 @@ namespace HyperEfficient.Controllers
 
         [HttpGet("empresa")]
         [Authorize]
-        public async Task<ActionResult<RelatorioEmpresaResponse>> Empresa([FromQuery] DateTime dataInicio, [FromQuery] DateTime dataFim)
+        public async Task<ActionResult<RelatorioEmpresaResponse>> Empresa([FromQuery] DateTime dataInicio,
+            [FromQuery] DateTime dataFim
+        )
         {
             return Ok(await _relatorioService.GetRelatorioEmpresa(dataInicio, dataFim));
         }
 
         [HttpGet("setor/{setorId}")]
         [Authorize]
-        public async Task<ActionResult<RelatorioSetorResponse>> Setor(int setorId, [FromQuery] DateTime dataInicio, [FromQuery] DateTime dataFim)
+        public async Task<ActionResult<RelatorioSetorResponse>> Setor(int setorId, [FromQuery] DateTime dataInicio,
+            [FromQuery] DateTime dataFim
+        )
         {
             return Ok(await _relatorioService.GetRelatorioSetor(setorId, dataInicio, dataFim));
         }
 
         [HttpGet("equipamento/{equipamentoId}")]
         [Authorize]
-        public async Task<ActionResult<RelatorioEquipamentoResponse>> Equipamento(int equipamentoId, [FromQuery] DateTime dataInicio, [FromQuery] DateTime dataFim)
+        public async Task<ActionResult<RelatorioEquipamentoResponse>> Equipamento(int equipamentoId,
+            [FromQuery] DateTime dataInicio, [FromQuery] DateTime dataFim
+        )
         {
             return Ok(await _relatorioService.GetRelatorioEquipamento(equipamentoId, dataInicio, dataFim));
         }

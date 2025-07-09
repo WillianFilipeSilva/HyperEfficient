@@ -8,7 +8,7 @@ namespace HyperEfficient.Infrastructure.Mapping
     {
         public RegistroProfile()
         {
-            CreateMap<RegistroInsertDto, RegistroEntity>();
+            CreateMap<RegistroInsertDto, Registro>();
         }
     }
 }

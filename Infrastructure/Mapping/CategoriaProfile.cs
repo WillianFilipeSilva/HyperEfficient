@@ -8,7 +8,7 @@ namespace HyperEfficient.Infrastructure.Mapping
     {
         public CategoriaProfile()
         {
-            CreateMap<CategoriaInsertDto, CategoriaEntity>();
+            CreateMap<CategoriaInsertDto, Categoria>();
         }
     }
 }

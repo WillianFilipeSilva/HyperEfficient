@@ -24,4 +24,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\Willian Filipe\Desktop\HyperEfficient-frontEnd\Backend\HyperEfficient\Dtos\Categoria\.editorconfig" />
+  </ItemGroup>
+
 </Project>

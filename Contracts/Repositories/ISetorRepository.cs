@@ -3,8 +3,8 @@ using HyperEfficient.Entities;
 
 namespace HyperEfficient.Contracts.Repositories
 {
-    public interface ISetorRepository : IRepositoryBase<SetorEntity>
+    public interface ISetorRepository : IRepositoryBase<Setor>
     {
-        Task<IEnumerable<SetorEntity>> GetPaged(int page, int pageSize);
+        Task<IEnumerable<Setor>> GetPaged(int page, int pageSize);
     }
 }

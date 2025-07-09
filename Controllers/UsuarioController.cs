@@ -28,7 +28,7 @@ namespace HyperEfficient.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<MessageResponse>> UpdateUsuario([FromBody] UsuarioEntity usuario)
+        public async Task<ActionResult<MessageResponse>> UpdateUsuario([FromBody] Usuario usuario)
         {
             return Ok(await _usuarioService.Update(usuario));
         }
@@ -70,7 +70,9 @@ namespace HyperEfficient.Controllers
 
         [HttpGet("paged")]
         [Authorize]
-        public async Task<ActionResult<GetPagedResponseBase<UsuarioDto>>> GetPagedUsuarios([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<GetPagedResponseBase<UsuarioDto>>> GetPagedUsuarios([FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10
+        )
         {
             return Ok(await _usuarioService.GetPaged(page, pageSize));
         }

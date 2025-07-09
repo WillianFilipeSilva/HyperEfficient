@@ -3,8 +3,8 @@ using HyperEfficient.Entities;
 
 namespace HyperEfficient.Contracts.Repositories
 {
-    public interface IRegistroRepository : IRepositoryBase<RegistroEntity>
+    public interface IRegistroRepository : IRepositoryBase<Registro>
     {
-        Task<IEnumerable<RegistroEntity>> GetPaged(int page, int pageSize);
+        Task<IEnumerable<Registro>> GetPaged(int page, int pageSize);
     }
 }

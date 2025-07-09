@@ -20,20 +20,16 @@ namespace HyperEfficient.Services
 
         public async Task<MessageResponse> Insert(CategoriaInsertDto dto)
         {
-            if (await _categoriaRepository.Insert(_map.Map<CategoriaEntity>(dto)) <= 0)
-            {
+            if (await _categoriaRepository.Insert(_map.Map<Categoria>(dto)) <= 0)
                 throw new KeyNotFoundException($"Não foi possível cadastrar a categoria {dto.Nome}!");
-            }
 
             return new MessageResponse { Message = "Categoria cadastrada com sucesso!" };
         }
 
-        public async Task<MessageResponse> Update(CategoriaEntity categoria)
+        public async Task<MessageResponse> Update(Categoria categoria)
         {
             if (await _categoriaRepository.Update(categoria) <= 0)
-            {
                 throw new KeyNotFoundException($"Não foi possível editar a categoria: {categoria.Nome}!");
-            }
 
             return new MessageResponse { Message = "Categoria editada com sucesso!" };
         }
@@ -41,21 +37,23 @@ namespace HyperEfficient.Services
         public async Task<MessageResponse> Delete(int id)
         {
             if (await _categoriaRepository.Delete(id) <= 0)
-            {
                 throw new KeyNotFoundException("Não foi possível deletar a categoria!");
-            }
 
             return new MessageResponse { Message = "Categoria deletada com sucesso!" };
         }
 
         public async Task<CategoriaGetAllResponse> GetAll()
         {
-            return new CategoriaGetAllResponse { Data = await _categoriaRepository.GetAll() ?? new List<CategoriaEntity>() };
+            return new CategoriaGetAllResponse
+            {
+                Data = await _categoriaRepository.GetAll() ?? new List<Categoria>()
+            };
         }
 
-        public async Task<CategoriaEntity> GetById(int id)
+        public async Task<Categoria> GetById(int id)
         {
-            return await _categoriaRepository.GetById(id) ?? throw new KeyNotFoundException("Categoria não encontrada!");
+            return await _categoriaRepository.GetById(id) ??
+                   throw new KeyNotFoundException("Categoria não encontrada!");
         }
     }
 }

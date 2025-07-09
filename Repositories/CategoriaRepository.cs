@@ -1,61 +1,14 @@
 using HyperEfficient.Contracts.Infrastructure;
 using HyperEfficient.Contracts.Repositories;
 using HyperEfficient.Entities;
+using HyperEfficient.Repositories.Base;
 
 namespace HyperEfficient.Repositories
 {
-    public class CategoriaRepository : ICategoriaRepository
+    public class CategoriaRepository : RepositoryBase<Categoria>, ICategoriaRepository
     {
-        private readonly IConnection _connection;
-
-        public CategoriaRepository(IConnection connection)
+        public CategoriaRepository(IConnection connection) : base(connection)
         {
-            _connection = connection;
-        }
-
-        public async Task<int> Insert(CategoriaEntity categoria)
-        {
-            string sql = @"
-            INSERT INTO CATEGORIA (NOME)
-                VALUES (@Nome);";
-
-            return await _connection.ExecuteAsync(sql, categoria);
-        }
-
-        public async Task<int> Update(CategoriaEntity categoria)
-        {
-            string sql = @"
-            UPDATE CATEGORIA
-                SET NOME = @Nome
-            WHERE ID = @Id";
-
-            return await _connection.ExecuteAsync(sql, categoria);
-        }
-
-        public async Task<int> Delete(int id)
-        {
-            return await _connection.ExecuteAsync("DELETE FROM CATEGORIA WHERE ID = @id", new { id });
-        }
-
-        public async Task<IEnumerable<CategoriaEntity>> GetAll()
-        {
-            string sql = $@"
-            SELECT ID AS {nameof(CategoriaEntity.Id)},
-                   NOME AS {nameof(CategoriaEntity.Nome)}
-            FROM CATEGORIA";
-
-            return await _connection.ExecuteQueryAsync<CategoriaEntity>(sql);
-        }
-
-        public async Task<CategoriaEntity?> GetById(int id)
-        {
-            string sql = $@"
-            SELECT ID AS {nameof(CategoriaEntity.Id)},
-                   NOME AS {nameof(CategoriaEntity.Nome)}
-            FROM CATEGORIA
-            WHERE ID = @id";
-
-            return await _connection.ExecuteQueryFirstAsync<CategoriaEntity>(sql, new { id });
         }
     }
 }

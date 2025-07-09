@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using HyperEfficient.Dtos.Setor;
+using HyperEfficient.Dtos.SetorDtos;
 using HyperEfficient.Entities;
 
 namespace HyperEfficient.Infrastructure.Mapping
@@ -8,7 +8,7 @@ namespace HyperEfficient.Infrastructure.Mapping
     {
         public SetorProfile()
         {
-            CreateMap<SetorInsertDto, SetorEntity>();
+            CreateMap<SetorInsertDto, Setor>();
         }
     }
 }

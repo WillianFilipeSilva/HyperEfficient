@@ -8,7 +8,11 @@ namespace HyperEfficient.Infrastructure.Mapping
     {
         public EquipamentoProfile()
         {
-            CreateMap<EquipamentoInsertDto, EquipamentoEntity>().ForMember(d => d.Ativo, o => o.MapFrom(_ => true));
+            CreateMap<EquipamentoInsertDto, Equipamento>().ForMember(e => e.Ativo, opt => opt.MapFrom(_ => true));
+
+            CreateMap<EquipamentoDto, Equipamento>()
+                .ForMember(dest => dest.CategoriaId, opt => opt.MapFrom(src => src.Categoria.Id))
+                .ForMember(dest => dest.SetorId, opt => opt.MapFrom(src => src.Setor.Id));
         }
     }
 }

@@ -28,20 +28,16 @@ namespace HyperEfficient.Services
         {
             dto.Senha = GeneratePbkdf2Hash(dto.Senha);
 
-            if (await _usuarioRepository.Insert(_map.Map<UsuarioEntity>(dto)) <= 0)
-            {
+            if (await _usuarioRepository.Insert(_map.Map<Usuario>(dto)) <= 0)
                 throw new KeyNotFoundException($"Não foi possível cadastrar o usuário {dto.Nome}!");
-            }
 
             return new MessageResponse { Message = "Usuário cadastrado com sucesso!" };
         }
 
-        public async Task<MessageResponse> Update(UsuarioEntity usuario)
+        public async Task<MessageResponse> Update(Usuario usuario)
         {
             if (await _usuarioRepository.Update(usuario) <= 0)
-            {
                 throw new KeyNotFoundException($"Não foi possível editar o usuário: {usuario.Nome}!");
-            }
 
             return new MessageResponse { Message = "Usuário editado com sucesso!" };
         }
@@ -49,24 +45,23 @@ namespace HyperEfficient.Services
         public async Task<MessageResponse> Delete(int id)
         {
             if (await _usuarioRepository.Delete(id) <= 0)
-            {
                 throw new KeyNotFoundException($"Não foi encontrado nenhum Usuário com o id: {id}");
-            }
 
             return new MessageResponse { Message = "Usuário deletado com sucesso!" };
         }
 
         public async Task<UsuarioGetAllResponse> GetAll()
         {
-            return new UsuarioGetAllResponse { Data = await _usuarioRepository.GetAll() ?? new List<UsuarioEntity>() };
+            return new UsuarioGetAllResponse { Data = await _usuarioRepository.GetAll() ?? new List<Usuario>() };
         }
 
         public async Task<GetPagedResponseBase<UsuarioDto>> GetPaged(int page, int pageSize)
         {
-            IEnumerable<UsuarioEntity> data = await _usuarioRepository.GetPaged(page, pageSize) ?? new List<UsuarioEntity>();
-            IEnumerable<UsuarioEntity> allData = await _usuarioRepository.GetAll() ?? new List<UsuarioEntity>();
-            int totalItems = allData.Count();
-            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            var data = await _usuarioRepository.GetPaged(page, pageSize) ??
+                       new List<Usuario>();
+            var allData = await _usuarioRepository.GetAll() ?? new List<Usuario>();
+            var totalItems = allData.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
             return new GetPagedResponseBase<UsuarioDto>
             {
@@ -80,20 +75,20 @@ namespace HyperEfficient.Services
 
         public async Task<UsuarioDto> GetById(int id)
         {
-            return _map.Map<UsuarioDto?>(_usuarioRepository.GetById(id)) ?? throw new KeyNotFoundException("Usuário não encontrado!");
+            return _map.Map<UsuarioDto?>(_usuarioRepository.GetById(id)) ??
+                   throw new KeyNotFoundException("Usuário não encontrado!");
         }
 
         public async Task<UsuarioLoginTokenDto> Login(UsuarioLoginDto usuarioLoginDto)
         {
-            UsuarioEntity usuario = await _usuarioRepository.GetByEmail(usuarioLoginDto.Email) ?? throw new InvalidCredentialsException("Usuário ou senha inválidos!");
+            var usuario = await _usuarioRepository.GetByEmail(usuarioLoginDto.Email) ??
+                          throw new InvalidCredentialsException("Usuário ou senha inválidos!");
 
             if (!VerifyPbkdf2Hash(usuarioLoginDto.Senha, usuario.Senha))
-            {
                 throw new InvalidCredentialsException("Usuário ou senha inválidos!");
-            }
 
-            TimeSpan tempoExpiracao = usuarioLoginDto.LembrarDeMim ? TimeSpan.FromDays(30) : TimeSpan.FromHours(2);
-            string token = _autentication.GenerateToken(usuario, tempoExpiracao);
+            var tempoExpiracao = usuarioLoginDto.LembrarDeMim ? TimeSpan.FromDays(30) : TimeSpan.FromHours(2);
+            var token = _autentication.GenerateToken(usuario, tempoExpiracao);
 
             return new UsuarioLoginTokenDto { Token = token, Usuario = _map.Map<UsuarioDto>(usuario) };
         }

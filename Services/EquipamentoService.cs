@@ -21,20 +21,16 @@ namespace HyperEfficient.Services
 
         public async Task<MessageResponse> Insert(EquipamentoInsertDto dto)
         {
-            if (await _equipamentoRepository.Insert(_map.Map<EquipamentoEntity>(dto)) <= 0)
-            {
+            if (await _equipamentoRepository.Insert(_map.Map<Equipamento>(dto)) <= 0)
                 throw new KeyNotFoundException($"Não foi possível cadastrar o equipamento {dto.Nome}!");
-            }
 
             return new MessageResponse { Message = "Equipamento cadastrado com sucesso!" };
         }
 
-        public async Task<MessageResponse> Update(EquipamentoEntity equipamento)
+        public async Task<MessageResponse> Update(Equipamento equipamento)
         {
             if (await _equipamentoRepository.Update(equipamento) <= 0)
-            {
                 throw new KeyNotFoundException($"Não foi possível editar o equipamento {equipamento.Nome}!");
-            }
 
             return new MessageResponse { Message = "Equipamento editado com sucesso!" };
         }
@@ -42,26 +38,31 @@ namespace HyperEfficient.Services
         public async Task<MessageResponse> Delete(int id)
         {
             if (await _equipamentoRepository.Delete(id) <= 0)
-            {
                 throw new KeyNotFoundException("Não foi possível deletar o equipamento!");
-            }
 
             return new MessageResponse { Message = "Equipamento deletado com sucesso!" };
         }
 
         public async Task<EquipamentoGetAllResponse> GetAll()
         {
-            return new EquipamentoGetAllResponse { Data = await _equipamentoRepository.GetAll() ?? new List<EquipamentoEntity>() };
+            return new EquipamentoGetAllResponse
+            {
+                Data = await _equipamentoRepository.GetAll() ?? new List<Equipamento>()
+            };
         }
 
-        public async Task<GetPagedResponseBase<EquipamentoEntity>> GetPaged(int page, int pageSize)
+        public async Task<GetPagedResponseBase<Equipamento>> GetPaged(int page, int pageSize)
         {
-            IEnumerable<EquipamentoEntity> data = await _equipamentoRepository.GetPaged(page, pageSize) ?? new List<EquipamentoEntity>();
-            IEnumerable<EquipamentoEntity> allData = await _equipamentoRepository.GetAll() ?? new List<EquipamentoEntity>();
-            int totalItems = allData.Count();
-            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            var data = await _equipamentoRepository.GetPaged(page, pageSize) ??
+                       new List<Equipamento>();
 
-            return new GetPagedResponseBase<EquipamentoEntity>
+            var allData =
+                await _equipamentoRepository.GetAll() ?? new List<Equipamento>();
+
+            var totalItems = allData.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            return new GetPagedResponseBase<Equipamento>
             {
                 Data = data,
                 Page = page,
@@ -71,9 +72,10 @@ namespace HyperEfficient.Services
             };
         }
 
-        public async Task<EquipamentoEntity> GetById(int id)
+        public async Task<Equipamento> GetById(int id)
         {
-            return await _equipamentoRepository.GetById(id) ?? throw new KeyNotFoundException("Equipamento não encontrado!");
+            return await _equipamentoRepository.GetById(id) ??
+                   throw new KeyNotFoundException("Equipamento não encontrado!");
         }
     }
 }

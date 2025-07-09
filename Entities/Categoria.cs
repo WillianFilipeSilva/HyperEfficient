@@ -2,7 +2,7 @@ using HyperEfficient.Entities.Base;
 
 namespace HyperEfficient.Entities
 {
-    public class CategoriaEntity : EntityBase
+    public class Categoria : EntityBase
     {
         public string Nome { get; set; }
     }

@@ -28,7 +28,7 @@ namespace HyperEfficient.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<MessageResponse>> UpdateEquipamento([FromBody] EquipamentoEntity equipamento)
+        public async Task<ActionResult<MessageResponse>> UpdateEquipamento([FromBody] Equipamento equipamento)
         {
             return Ok(await _equipamentoService.Update(equipamento));
         }
@@ -49,14 +49,16 @@ namespace HyperEfficient.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<EquipamentoEntity>> GetEquipamentoById(int id)
+        public async Task<ActionResult<Equipamento>> GetEquipamentoById(int id)
         {
             return Ok(await _equipamentoService.GetById(id));
         }
 
         [HttpGet("paged")]
         [Authorize]
-        public async Task<ActionResult<GetPagedResponseBase<EquipamentoEntity>>> GetPagedEquipamentos([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<GetPagedResponseBase<Equipamento>>> GetPagedEquipamentos(
+            [FromQuery] int page = 1, [FromQuery] int pageSize = 10
+        )
         {
             return Ok(await _equipamentoService.GetPaged(page, pageSize));
         }
