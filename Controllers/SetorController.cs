@@ -1,7 +1,7 @@
 using HyperEfficient.Contracts.Services;
 using HyperEfficient.Dtos.Base;
 using HyperEfficient.Dtos.MessageResponse;
-using HyperEfficient.Dtos.SetorDtos;
+using HyperEfficient.Dtos.Setor;
 using HyperEfficient.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

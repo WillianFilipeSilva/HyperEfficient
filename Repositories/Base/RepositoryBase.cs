@@ -1,7 +1,5 @@
 ﻿using HyperEfficient.Contracts.Infrastructure;
-using HyperEfficient.Contracts.Repositories;
 using HyperEfficient.Contracts.Repositories.Base;
-using HyperEfficient.Entities;
 using System.Reflection;
 
 namespace HyperEfficient.Repositories.Base
@@ -64,35 +62,6 @@ namespace HyperEfficient.Repositories.Base
             var selectCols = string.Join(", ", new[] { _keyName }.Concat(_columns));
             var sql = $"SELECT {selectCols} FROM {_tableName} WHERE {_keyName} = @id;";
             return await _connection.ExecuteQueryFirstAsync<T>(sql, new { id });
-        }
-    }
-
-    public class EquipamentoRepository : RepositoryBase<Equipamento>, IEquipamentoRepository
-    {
-        public EquipamentoRepository(IConnection connection) : base(connection)
-        {
-        }
-
-        public async Task<IEnumerable<Equipamento>> GetPaged(int page, int pageSize)
-        {
-            if (page < 1)
-                page = 1;
-
-            if (pageSize < 1)
-                pageSize = 10;
-
-            var offset = (page - 1) * pageSize;
-            var type = typeof(Equipamento);
-            var keyName = "Id";
-            var cols = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Select(p => p.Name);
-            var selectCols = string.Join(", ", cols);
-
-            var sql = $@"
-                SELECT {selectCols}
-                FROM EQUIPAMENTO
-                LIMIT @pageSize OFFSET @offset;";
-            return await _connection.ExecuteQueryAsync<Equipamento>(sql, new { pageSize, offset });
         }
     }
 }

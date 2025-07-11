@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace HyperEfficient.Dtos.SetorDtos
+namespace HyperEfficient.Dtos.Setor
 {
     public class SetorInsertDto
     {

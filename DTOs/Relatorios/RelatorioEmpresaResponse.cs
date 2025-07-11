@@ -2,9 +2,9 @@
 {
     public class RelatorioEmpresaResponse
     {
-        public int QuantidadeSetores { get; set; }
-        public int QuantidadeEquipamentos { get; set; }
-        public decimal TempoUsoTotal { get; set; }
-        public decimal GastoEnergeticoTotal { get; set; }
+        public TotalizadoresDTO Totalizadores { get; set; }
+        public List<DadosMensaisDTO> DadosMensais { get; set; }
+        public List<SetorResumoDTO> Setores { get; set; }
+        public List<CategoriaResumoDTO> Categorias { get; set; }
     }
 }

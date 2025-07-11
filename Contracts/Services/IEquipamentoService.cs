@@ -11,7 +11,7 @@ namespace HyperEfficient.Contracts.Services
         Task<MessageResponse> Update(Equipamento equipamento);
         Task<MessageResponse> Delete(int id);
         Task<EquipamentoGetAllResponse> GetAll();
-        Task<GetPagedResponseBase<Equipamento>> GetPaged(int page, int pageSize);
+        Task<GetPagedResponseBase<EquipamentoDto>> GetPaged(int page, int pageSize);
         Task<Equipamento> GetById(int id);
     }
 }

@@ -3,7 +3,7 @@ using HyperEfficient.Contracts.Repositories;
 using HyperEfficient.Contracts.Services;
 using HyperEfficient.Dtos.Base;
 using HyperEfficient.Dtos.MessageResponse;
-using HyperEfficient.Dtos.SetorDtos;
+using HyperEfficient.Dtos.Setor;
 using HyperEfficient.Entities;
 
 namespace HyperEfficient.Services
@@ -17,14 +17,6 @@ namespace HyperEfficient.Services
         {
             _setorRepository = setorRepository;
             _map = map;
-        }
-
-        public async Task<MessageResponse> Insert(SetorInsertDto dto)
-        {
-            if (await _setorRepository.Insert(_map.Map<Setor>(dto)) <= 0)
-                throw new KeyNotFoundException($"Não foi possível cadastrar o setor {dto.Nome}!");
-
-            return new MessageResponse { Message = "Setor cadastrado com sucesso!" };
         }
 
         public async Task<MessageResponse> Update(Setor setor)
@@ -68,6 +60,14 @@ namespace HyperEfficient.Services
         public async Task<Setor> GetById(int id)
         {
             return await _setorRepository.GetById(id) ?? throw new KeyNotFoundException("Setor não encontrado!");
+        }
+
+        public async Task<MessageResponse> Insert(SetorInsertDto dto)
+        {
+            if (await _setorRepository.Insert(_map.Map<Setor>(dto)) <= 0)
+                throw new KeyNotFoundException($"Não foi possível cadastrar o setor {dto.Nome}!");
+
+            return new MessageResponse { Message = "Setor cadastrado com sucesso!" };
         }
     }
 }

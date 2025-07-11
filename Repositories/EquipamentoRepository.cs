@@ -1,5 +1,6 @@
 using HyperEfficient.Contracts.Infrastructure;
 using HyperEfficient.Contracts.Repositories;
+using HyperEfficient.Dtos.Equipamento;
 using HyperEfficient.Entities;
 using HyperEfficient.Repositories.Base;
 
@@ -33,6 +34,43 @@ namespace HyperEfficient.Repositories
             LIMIT @pageSize OFFSET @offset";
 
             return await _connection.ExecuteQueryAsync<Equipamento>(sql, new { pageSize, offset });
+        }
+
+        public async Task<IEnumerable<EquipamentoDto>> GetEquipamentoProjection(int page, int pageSize)
+        {
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var offset = (page - 1) * pageSize;
+
+            var sql = @"
+            SELECT
+                e.Id         AS Id,
+                e.Nome       AS Nome,
+                e.Descricao  AS Descricao,
+                e.Gastokwh   AS Gastokwh,
+                e.Ativo      AS Ativo,
+                c.Id         AS CategoriaId,
+                c.Id         AS Id,
+                c.Nome       AS Nome,
+                s.Id         AS SetorId,
+                s.Id         AS Id,
+                s.Nome       AS Nome,
+                s.Descricao  AS Descricao
+            FROM Equipamento e
+            JOIN Categoria c ON c.Id = e.CategoriaId
+            JOIN Setor     s ON s.Id = e.SetorId
+            LIMIT @pageSize OFFSET @offset;";
+
+            return await _connection.ExecuteQueryMapAsync<EquipamentoDto, Categoria, Setor>(sql,
+                (eq, cat, set) =>
+                {
+                    eq.Categoria = cat;
+                    eq.Setor = set;
+                    return eq;
+                },
+                new { pageSize, offset },
+                splitOn: "CategoriaId,SetorId");
         }
     }
 }

@@ -51,10 +51,16 @@ namespace HyperEfficient.Services
             };
         }
 
-        public async Task<GetPagedResponseBase<Equipamento>> GetPaged(int page, int pageSize)
+        public async Task<Equipamento> GetById(int id)
         {
-            var data = await _equipamentoRepository.GetPaged(page, pageSize) ??
-                       new List<Equipamento>();
+            return await _equipamentoRepository.GetById(id) ??
+                   throw new KeyNotFoundException("Equipamento não encontrado!");
+        }
+
+        public async Task<GetPagedResponseBase<EquipamentoDto>> GetPaged(int page, int pageSize)
+        {
+            var data = await _equipamentoRepository.GetEquipamentoProjection(page, pageSize) ??
+                       new List<EquipamentoDto>();
 
             var allData =
                 await _equipamentoRepository.GetAll() ?? new List<Equipamento>();
@@ -62,7 +68,7 @@ namespace HyperEfficient.Services
             var totalItems = allData.Count();
             var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
-            return new GetPagedResponseBase<Equipamento>
+            return new GetPagedResponseBase<EquipamentoDto>
             {
                 Data = data,
                 Page = page,
@@ -70,12 +76,6 @@ namespace HyperEfficient.Services
                 TotalPages = totalPages,
                 TotalItems = totalItems
             };
-        }
-
-        public async Task<Equipamento> GetById(int id)
-        {
-            return await _equipamentoRepository.GetById(id) ??
-                   throw new KeyNotFoundException("Equipamento não encontrado!");
         }
     }
 }

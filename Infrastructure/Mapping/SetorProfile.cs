@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using HyperEfficient.Dtos.SetorDtos;
+using HyperEfficient.Dtos.Setor;
 using HyperEfficient.Entities;
 
 namespace HyperEfficient.Infrastructure.Mapping

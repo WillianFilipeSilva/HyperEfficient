@@ -56,7 +56,7 @@ namespace HyperEfficient.Controllers
 
         [HttpGet("paged")]
         [Authorize]
-        public async Task<ActionResult<GetPagedResponseBase<Equipamento>>> GetPagedEquipamentos(
+        public async Task<ActionResult<GetPagedResponseBase<EquipamentoDto>>> GetPagedEquipamentos(
             [FromQuery] int page = 1, [FromQuery] int pageSize = 10
         )
         {
