@@ -24,7 +24,7 @@
             ServiceLifetime lifetime
         )
         {
-            IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t =>
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t =>
                 t.IsClass && !t.IsAbstract && t.Namespace != null && t.Namespace.StartsWith(targetNamespace) &&
                 t.Name.EndsWith(suffix));
 

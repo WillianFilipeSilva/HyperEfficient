@@ -45,10 +45,7 @@ namespace HyperEfficient.Services
 
         public async Task<RegistroGetAllResponse> GetAll()
         {
-            return new RegistroGetAllResponse
-            {
-                Data = await _registroRepository.GetAll() ?? new List<Registro>()
-            };
+            return new RegistroGetAllResponse { Data = await _registroRepository.GetAll() ?? new List<Registro>() };
         }
 
         public async Task<GetPagedResponseBase<Registro>> GetPaged(int page, int pageSize)

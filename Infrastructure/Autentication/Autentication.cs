@@ -18,11 +18,22 @@ namespace HyperEfficient.Infrastructure.Autentication
 
         public string GenerateToken(Usuario usuarioEntity, TimeSpan tempoExpiracao)
         {
-            byte[] key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
-            SecurityTokenDescriptor tokenDescriptor = new() { Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, usuarioEntity.Nome), new Claim(ClaimTypes.Email, usuarioEntity.Email) }), Expires = DateTime.UtcNow.Add(tempoExpiracao), SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature) };
+            var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
+            SecurityTokenDescriptor tokenDescriptor = new()
+            {
+                Subject =
+                    new ClaimsIdentity(new[]
+                    {
+                        new Claim(ClaimTypes.Name, usuarioEntity.Nome),
+                        new Claim(ClaimTypes.Email, usuarioEntity.Email)
+                    }),
+                Expires = DateTime.UtcNow.Add(tempoExpiracao),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
 
             JwtSecurityTokenHandler tokenHandler = new();
-            SecurityToken? token = tokenHandler.CreateToken(tokenDescriptor);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
         }

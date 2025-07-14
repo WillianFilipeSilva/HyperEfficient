@@ -19,8 +19,8 @@ namespace HyperEfficient.Infrastructure.Logger
             try
             {
                 Directory.CreateDirectory(LogDirectory);
-                string filePath = Path.Combine(LogDirectory, fileName);
-                string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}";
+                var filePath = Path.Combine(LogDirectory, fileName);
+                var logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}";
                 await File.AppendAllTextAsync(filePath, logEntry);
             }
             catch (Exception ex)

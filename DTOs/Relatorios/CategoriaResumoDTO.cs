@@ -8,4 +8,4 @@ namespace HyperEfficient.Dtos.Relatorios
         public decimal TempoUsoTotal { get; set; }
         public int QuantidadeEquipamentos { get; set; }
     }
-} 
+}

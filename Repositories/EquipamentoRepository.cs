@@ -70,7 +70,7 @@ namespace HyperEfficient.Repositories
                     return eq;
                 },
                 new { pageSize, offset },
-                splitOn: "CategoriaId,SetorId");
+                "CategoriaId,SetorId");
         }
     }
 }

@@ -44,10 +44,7 @@ namespace HyperEfficient.Services
 
         public async Task<CategoriaGetAllResponse> GetAll()
         {
-            return new CategoriaGetAllResponse
-            {
-                Data = await _categoriaRepository.GetAll() ?? new List<Categoria>()
-            };
+            return new CategoriaGetAllResponse { Data = await _categoriaRepository.GetAll() ?? new List<Categoria>() };
         }
 
         public async Task<Categoria> GetById(int id)

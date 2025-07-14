@@ -8,18 +8,20 @@ namespace HyperEfficient.Infrastructure.DatabaseInitializer
     {
         public static void EnsureDatabaseAndTablesCreated(IConnection connection, IConfiguration configuration)
         {
-            MySqlConnectionStringBuilder builder = new(configuration.GetConnectionString("Default") ?? throw new ArgumentException("Não foi encontrada a string de conexão com o banco no seu AppSettings!"));
+            MySqlConnectionStringBuilder builder = new(configuration.GetConnectionString("Default") ??
+                                                       throw new ArgumentException(
+                                                           "Não foi encontrada a string de conexão com o banco no seu AppSettings!"));
             builder.Database = "";
 
-            string script = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "CreateSQL.txt"));
+            var script = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "CreateSQL.txt"));
 
             using (MySqlConnection con = new(builder.ConnectionString))
             {
                 con.Open();
 
-                foreach (string cmd in script.Split(';'))
+                foreach (var cmd in script.Split(';'))
                 {
-                    string trimmed = cmd.Trim();
+                    var trimmed = cmd.Trim();
 
                     if (!string.IsNullOrWhiteSpace(trimmed))
                     {
