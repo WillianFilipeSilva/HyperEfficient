@@ -1,6 +1,6 @@
 namespace HyperEfficient.Dtos.Relatorios
 {
-    public class TotalizadoresDTO
+    public class TotalizadoresDto
     {
         public int QuantidadeSetores { get; set; }
         public int QuantidadeEquipamentos { get; set; }

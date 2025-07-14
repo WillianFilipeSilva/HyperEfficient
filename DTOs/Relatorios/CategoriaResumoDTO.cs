@@ -1,6 +1,6 @@
 namespace HyperEfficient.Dtos.Relatorios
 {
-    public class CategoriaResumoDTO
+    public class CategoriaResumoDto
     {
         public int Id { get; set; }
         public string Nome { get; set; }

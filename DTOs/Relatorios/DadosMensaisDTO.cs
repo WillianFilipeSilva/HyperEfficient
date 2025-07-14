@@ -1,6 +1,6 @@
 namespace HyperEfficient.Dtos.Relatorios
 {
-    public class DadosMensaisDTO
+    public class DadosMensaisDto
     {
         public string Mes { get; set; }
         public string MesAbreviado { get; set; }

@@ -2,9 +2,9 @@
 {
     public class RelatorioEmpresaResponse
     {
-        public TotalizadoresDTO Totalizadores { get; set; }
-        public List<DadosMensaisDTO> DadosMensais { get; set; }
-        public List<SetorResumoDTO> Setores { get; set; }
-        public List<CategoriaResumoDTO> Categorias { get; set; }
+        public TotalizadoresDto Totalizadores { get; set; }
+        public List<DadosMensaisDto> DadosMensais { get; set; }
+        public List<SetorResumoDto> Setores { get; set; }
+        public List<CategoriaResumoDto> Categorias { get; set; }
     }
 }
