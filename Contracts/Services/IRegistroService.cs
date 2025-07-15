@@ -7,8 +7,8 @@ namespace HyperEfficient.Contracts.Services
 {
     public interface IRegistroService
     {
-        Task<MessageResponse> Insert(RegistroInsertDto equipamento);
-        Task<MessageResponse> Update(Registro equipamento);
+        Task<MessageResponse> Insert(RegistroInsertDto registro);
+        Task<MessageResponse> Update(Registro registro);
         Task<MessageResponse> Delete(int id);
         Task<RegistroGetAllResponse> GetAll();
         Task<GetPagedResponseBase<Registro>> GetPaged(int page, int pageSize);

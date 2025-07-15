@@ -11,6 +11,19 @@ namespace HyperEfficient.Repositories
         {
         }
 
+        public async Task<Registro?> GetRegistroByEquipamentoId(int equipamentoId)
+        {
+            var sql = $@"
+            SELECT ID AS {nameof(Registro.Id)},
+                   DATAINICIAL AS {nameof(Registro.DataInicial)},
+                   DATAFINAL AS {nameof(Registro.DataFinal)},
+                   EQUIPAMENTOID AS {nameof(Registro.EquipamentoId)}
+            FROM REGISTRO
+            WHERE EQUIPAMENTOID = @equipamentoId
+            ORDER BY ID DESC";
+            return await _connection.ExecuteQueryFirstAsync<Registro>(sql, new { equipamentoId });
+        }
+
         public async Task<IEnumerable<Registro>> GetPaged(int page, int pageSize)
         {
             if (page < 1)
