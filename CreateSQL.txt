@@ -38,6 +38,9 @@ CREATE TABLE IF NOT EXISTS `Registro` (
   `DataInicial`   DATETIME NOT NULL,
   `DataFinal`     DATETIME NULL,
   `EquipamentoId` INT NOT NULL,
+  `TotalTempo`    DECIMAL(6,2) GENERATED ALWAYS AS (
+    IF(DataFinal IS NOT NULL, TIMESTAMPDIFF(SECOND, DataInicial, DataFinal) / 3600, NULL)
+  ) STORED,
   PRIMARY KEY (`Id`),
   INDEX `idx_Registro_Equipamento` (`EquipamentoId`),
   CONSTRAINT `fk_Registro_Equipamento`

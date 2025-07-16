@@ -25,7 +25,9 @@ namespace HyperEfficient.Repositories.Base
             _keyName = keyProp.Name;
 
             _columns = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => !string.Equals(p.Name, _keyName, StringComparison.OrdinalIgnoreCase))
+                .Where(p =>
+                    !string.Equals(p.Name, _keyName, StringComparison.OrdinalIgnoreCase) &&
+                    p.SetMethod != null && p.SetMethod.IsPublic)
                 .Select(p => p.Name);
         }
 

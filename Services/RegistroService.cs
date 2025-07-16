@@ -11,8 +11,12 @@ namespace HyperEfficient.Services
 {
     public class RegistroService : ServiceBase<Registro>, IRegistroService
     {
-        public RegistroService(IRegistroRepository repository, IMapper map) : base(repository, map)
+        private readonly IEquipamentoRepository _equipamentoRepository;
+
+        public RegistroService(IRegistroRepository repository, IMapper map, IEquipamentoRepository equipamentoRepository
+        ) : base(repository, map)
         {
+            _equipamentoRepository = equipamentoRepository;
         }
 
         public async Task<MessageResponse> Insert(RegistroInsertDto dto)
@@ -68,20 +72,22 @@ namespace HyperEfficient.Services
 
         public async Task<MessageResponse> StartStopRegistro(int equipamentoId)
         {
-            if (await ((IRegistroRepository)_repository).GetRegistroByEquipamentoId(equipamentoId) is var registro &&
-                registro is not null && registro.DataFinal is null)
+            try
             {
-                registro.DataFinal = DateTime.UtcNow;
-                if (await _repository.Update(registro) <= 0)
+                if (await ((IRegistroRepository)_repository)
+                        .GetRegistroByEquipamentoId(equipamentoId) is var registro && registro is not null &&
+                    registro.DataFinal is null)
                 {
-                    throw new KeyNotFoundException(
-                        $"Não foi possível finalizar o registro para o equipamento {equipamentoId}!");
+                    registro.DataFinal = DateTime.UtcNow;
+                    if (await _repository.Update(registro) <= 0)
+                    {
+                        throw new KeyNotFoundException(
+                            $"Não foi possível finalizar o registro para o equipamento {equipamentoId}!");
+                    }
+
+                    return new MessageResponse { Message = "Registro finalizado!" };
                 }
 
-                return new MessageResponse { Message = "Registro finalizado!" };
-            }
-            else
-            {
                 registro = new Registro
                 {
                     EquipamentoId = equipamentoId, DataInicial = DateTime.UtcNow, DataFinal = null
@@ -93,6 +99,10 @@ namespace HyperEfficient.Services
                 }
 
                 return new MessageResponse { Message = "Registro iniciado!" };
+            }
+            finally
+            {
+                _equipamentoRepository.ToggleEquipamentoStatus(equipamentoId);
             }
         }
     }

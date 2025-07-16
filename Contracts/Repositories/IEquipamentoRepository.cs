@@ -8,5 +8,7 @@ namespace HyperEfficient.Contracts.Repositories
     {
         Task<IEnumerable<Equipamento>> GetPaged(int page, int pageSize);
         Task<IEnumerable<EquipamentoDto>> GetEquipamentoProjection(int page, int pageSize);
+
+        Task<int> ToggleEquipamentoStatus(int id);
     }
 }

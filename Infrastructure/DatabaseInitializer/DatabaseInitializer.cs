@@ -28,6 +28,24 @@ namespace HyperEfficient.Infrastructure.DatabaseInitializer
                         con.Execute(trimmed);
                     }
                 }
+
+                var eventSql = @"
+                    CREATE EVENT IF NOT EXISTS fecha_registros_23h59
+                    ON SCHEDULE EVERY 1 DAY
+                    STARTS (TIMESTAMP(CURRENT_DATE, '23:59:00') + INTERVAL 0 DAY)
+                    DO
+                    BEGIN
+                        UPDATE Registro
+                        SET DataFinal = NOW()
+                        WHERE DataFinal IS NULL;
+
+                        INSERT INTO Registro (DataInicial, EquipamentoId)
+                        SELECT NOW(), EquipamentoId
+                        FROM Registro
+                        WHERE DataFinal = NOW();
+                    END
+                ";
+                con.Execute(eventSql);
             }
         }
     }

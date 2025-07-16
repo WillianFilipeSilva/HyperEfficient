@@ -13,5 +13,6 @@ namespace HyperEfficient.Contracts.Services
         Task<RegistroGetAllResponse> GetAll();
         Task<GetPagedResponseBase<Registro>> GetPaged(int page, int pageSize);
         Task<Registro> GetById(int id);
+        Task<MessageResponse> StartStopRegistro(int equipamentoId);
     }
 }

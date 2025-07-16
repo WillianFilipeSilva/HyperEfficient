@@ -17,7 +17,8 @@ namespace HyperEfficient.Repositories
             SELECT ID AS {nameof(Registro.Id)},
                    DATAINICIAL AS {nameof(Registro.DataInicial)},
                    DATAFINAL AS {nameof(Registro.DataFinal)},
-                   EQUIPAMENTOID AS {nameof(Registro.EquipamentoId)}
+                   EQUIPAMENTOID AS {nameof(Registro.EquipamentoId)},
+                   TOTALTEMPO AS {nameof(Registro.TotalTempo)}
             FROM REGISTRO
             WHERE EQUIPAMENTOID = @equipamentoId
             ORDER BY ID DESC";
@@ -38,7 +39,8 @@ namespace HyperEfficient.Repositories
             SELECT ID AS {nameof(Registro.Id)},
                    DATAINICIAL AS {nameof(Registro.DataInicial)},
                    DATAFINAL AS {nameof(Registro.DataFinal)},
-                   EQUIPAMENTOID AS {nameof(Registro.EquipamentoId)}
+                   EQUIPAMENTOID AS {nameof(Registro.EquipamentoId)},
+                   TOTALTEMPO AS {nameof(Registro.TotalTempo)}
             FROM REGISTRO
             LIMIT @pageSize OFFSET @offset";
 

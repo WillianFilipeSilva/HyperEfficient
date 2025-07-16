@@ -7,5 +7,6 @@ namespace HyperEfficient.Entities
         public DateTime DataInicial { get; set; }
         public DateTime? DataFinal { get; set; }
         public int EquipamentoId { get; set; }
+        public decimal? TotalTempo { get; private set; }
     }
 }

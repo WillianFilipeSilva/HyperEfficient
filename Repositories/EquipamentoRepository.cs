@@ -72,5 +72,15 @@ namespace HyperEfficient.Repositories
                 new { pageSize, offset },
                 "CategoriaId,SetorId");
         }
+
+        public async Task<int> ToggleEquipamentoStatus(int id)
+        {
+            var sql = @"
+                UPDATE Equipamento
+                SET Ativo = IF(Ativo = 1, 0, 1)
+                WHERE Id = @id;";
+
+            return await _connection.ExecuteAsync(sql, new { id });
+        }
     }
 }

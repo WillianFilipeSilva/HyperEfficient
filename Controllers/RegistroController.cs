@@ -21,13 +21,6 @@ namespace HyperEfficient.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<MessageResponse>> StartStopRegistro(int equipamentoId)
-        {
-            return Ok(await _registroService.StartStopRegistro(equipamentoId));
-        }
-
-        [HttpPost]
-        [Authorize]
         public async Task<ActionResult<MessageResponse>> InsertRegistro([FromBody] RegistroInsertDto registro)
         {
             return Ok(await _registroService.Insert(registro));
@@ -68,6 +61,13 @@ namespace HyperEfficient.Controllers
         )
         {
             return Ok(await _registroService.GetPaged(page, pageSize));
+        }
+
+        [HttpPost("registrar/{equipamentoId}")]
+        [Authorize]
+        public async Task<ActionResult<MessageResponse>> StartStopRegistro(int equipamentoId)
+        {
+            return Ok(await _registroService.StartStopRegistro(equipamentoId));
         }
     }
 }

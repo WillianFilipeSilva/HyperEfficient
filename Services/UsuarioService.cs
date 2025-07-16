@@ -73,9 +73,9 @@ namespace HyperEfficient.Services
             };
         }
 
-        public async Task<UsuarioDto> GetById(int id)
+        public async Task<UsuarioDto?> GetById(int id)
         {
-            return _map.Map<UsuarioDto?>(_usuarioRepository.GetById(id)) ??
+            return _map.Map<UsuarioDto?>(await _usuarioRepository.GetById(id)) ??
                    throw new KeyNotFoundException("Usuário não encontrado!");
         }
 
