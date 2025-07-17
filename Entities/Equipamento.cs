@@ -9,6 +9,6 @@ namespace HyperEfficient.Entities
         public int CategoriaId { get; set; }
         public string? Descricao { get; set; }
         public string Nome { get; set; }
-        public bool Ativo { get; set; } = true;
+        public bool Ativo { get; set; } = false;
     }
 }
