@@ -19,12 +19,28 @@ namespace HyperEfficient.Repositories
                 SELECT
                     (SELECT COUNT(*) FROM Setor)       AS QuantidadeSetores,
                     (SELECT COUNT(*) FROM Equipamento) AS QuantidadeEquipamentos,
-                    COALESCE(SUM(TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600,0)              AS TempoUsoTotal,
-                    COALESCE(SUM((TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600*e.Gastokwh),0) AS GastoEnergeticoTotal
+                    COALESCE(SUM(
+                        CASE 
+                            WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                                GREATEST(0, TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                            WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                                GREATEST(0, TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                            ELSE 0
+                        END
+                    )/3600,0) AS TempoUsoTotal,
+                    COALESCE(SUM(
+                        CASE 
+                            WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                                GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                            WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                                GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                            ELSE 0
+                        END
+                    ),0) AS GastoEnergeticoTotal
                 FROM Registro r
                 LEFT JOIN Equipamento e ON e.Id = r.EquipamentoId
-                WHERE r.DataInicial >= @dataInicio
-                  AND IFNULL(r.DataFinal,NOW()) <= @dataFim;";
+                WHERE r.DataInicial < @dataFim
+                  AND IFNULL(r.DataFinal, NOW()) > @dataInicio;";
 
             return await _connection.ExecuteQueryFirstAsync<TotalizadoresDto>(sql, new { dataInicio, dataFim })
                    ?? throw new KeyNotFoundException("Não foi possível calcular os totalizadores.");
@@ -35,12 +51,24 @@ namespace HyperEfficient.Repositories
             const string sql = @"
                 SELECT DATE_FORMAT(r.DataInicial,'%Y-%m')     AS Mes,
                        UPPER(DATE_FORMAT(r.DataInicial,'%b')) AS MesAbreviado,
-                       SUM((TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600*e.Gastokwh) AS ConsumoKwh,
-                       SUM(TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600              AS TempoUso
+                       SUM(CASE 
+                           WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                           WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                           ELSE 0
+                       END) AS ConsumoKwh,
+                       SUM(CASE 
+                           WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                               GREATEST(0, TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                           WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                               GREATEST(0, TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                           ELSE 0
+                       END)/3600 AS TempoUso
                 FROM Registro r
                 JOIN Equipamento e ON e.Id = r.EquipamentoId
-                WHERE r.DataInicial >= @dataInicio
-                  AND IFNULL(r.DataFinal,NOW()) <= @dataFim
+                WHERE r.DataInicial < @dataFim
+                  AND IFNULL(r.DataFinal, NOW()) > @dataInicio
                 GROUP BY Mes, MesAbreviado
                 ORDER BY Mes;";
 
@@ -53,14 +81,26 @@ namespace HyperEfficient.Repositories
                 SELECT
                     s.Id   AS Id,
                     s.Nome AS Nome,
-                    COALESCE(SUM((TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600*e.Gastokwh),0) AS GastoTotal,
-                    COALESCE(SUM(TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600,0)              AS TempoUsoTotal,
+                    COALESCE(SUM(CASE 
+                        WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                            GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                        WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                            GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                        ELSE 0
+                    END),0) AS GastoTotal,
+                    COALESCE(SUM(CASE 
+                        WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                            GREATEST(0, TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                        WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                            GREATEST(0, TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                        ELSE 0
+                    END)/3600,0) AS TempoUsoTotal,
                     COUNT(DISTINCT e.Id) AS QuantidadeEquipamentos
                 FROM Setor s
                 LEFT JOIN Equipamento e ON e.SetorId = s.Id
                 LEFT JOIN Registro   r  ON r.EquipamentoId = e.Id
-                                          AND r.DataInicial >= @dataInicio
-                                          AND IFNULL(r.DataFinal,NOW()) <= @dataFim
+                                          AND r.DataInicial < @dataFim
+                                          AND IFNULL(r.DataFinal, NOW()) > @dataInicio
                 GROUP BY s.Id, s.Nome
                 ORDER BY GastoTotal DESC;";
 
@@ -73,14 +113,26 @@ namespace HyperEfficient.Repositories
                 SELECT
                     c.Id   AS Id,
                     c.Nome AS Nome,
-                    COALESCE(SUM((TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600*e.Gastokwh),0) AS GastoTotal,
-                    COALESCE(SUM(TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600,0)              AS TempoUsoTotal,
+                    COALESCE(SUM(CASE 
+                        WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                            GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                        WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                            GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                        ELSE 0
+                    END),0) AS GastoTotal,
+                    COALESCE(SUM(CASE 
+                        WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                            GREATEST(0, TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                        WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                            GREATEST(0, TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                        ELSE 0
+                    END)/3600,0) AS TempoUsoTotal,
                     COUNT(DISTINCT e.Id) AS QuantidadeEquipamentos
                 FROM Categoria c
                 LEFT JOIN Equipamento e ON e.CategoriaId = c.Id
                 LEFT JOIN Registro   r  ON r.EquipamentoId = e.Id
-                                          AND r.DataInicial >= @dataInicio
-                                          AND IFNULL(r.DataFinal,NOW()) <= @dataFim
+                                          AND r.DataInicial < @dataFim
+                                          AND IFNULL(r.DataFinal, NOW()) > @dataInicio
                 GROUP BY c.Id, c.Nome
                 ORDER BY GastoTotal DESC;";
 
@@ -92,13 +144,25 @@ namespace HyperEfficient.Repositories
             const string sql = @"
                 SELECT s.Id AS SetorId, s.Nome AS NomeSetor,
                        COUNT(DISTINCT e.Id) AS QuantidadeEquipamentos,
-                       COALESCE(SUM(TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600,0)              AS TempoUsoTotal,
-                       COALESCE(SUM((TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600*e.Gastokwh),0) AS GastoEnergeticoTotal
+                       COALESCE(SUM(CASE 
+                           WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                               GREATEST(0, TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                           WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                               GREATEST(0, TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                           ELSE 0
+                       END)/3600,0) AS TempoUsoTotal,
+                       COALESCE(SUM(CASE 
+                           WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                           WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                           ELSE 0
+                       END),0) AS GastoEnergeticoTotal
                 FROM Setor s
                 LEFT JOIN Equipamento e ON e.SetorId = s.Id
                 LEFT JOIN Registro   r  ON r.EquipamentoId = e.Id
-                                          AND r.DataInicial >= @dataInicio
-                                          AND IFNULL(r.DataFinal,NOW()) <= @dataFim
+                                          AND r.DataInicial < @dataFim
+                                          AND IFNULL(r.DataFinal, NOW()) > @dataInicio
                 WHERE s.Id = @setorId
                 GROUP BY s.Id, s.Nome;";
 
@@ -112,13 +176,25 @@ namespace HyperEfficient.Repositories
         {
             const string sql = @"
                 SELECT e.Id AS EquipamentoId, e.Nome AS NomeEquipamento,
-                       COALESCE(SUM(TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600,0)              AS TempoUsoTotal,
-                       COALESCE(SUM((TIMESTAMPDIFF(SECOND,r.DataInicial,IFNULL(r.DataFinal,NOW())))/3600*e.Gastokwh),0) AS GastoEnergeticoTotal,
+                       COALESCE(SUM(CASE 
+                           WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                               GREATEST(0, TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                           WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                               GREATEST(0, TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim)))
+                           ELSE 0
+                       END)/3600,0) AS TempoUsoTotal,
+                       COALESCE(SUM(CASE 
+                           WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                           WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                           ELSE 0
+                       END),0) AS GastoEnergeticoTotal,
                        e.Ativo
                 FROM Equipamento e
                 LEFT JOIN Registro r ON r.EquipamentoId = e.Id
-                                       AND r.DataInicial >= @dataInicio
-                                       AND IFNULL(r.DataFinal,NOW()) <= @dataFim
+                                       AND r.DataInicial < @dataFim
+                                       AND IFNULL(r.DataFinal, NOW()) > @dataInicio
                 WHERE e.Id = @equipamentoId
                 GROUP BY e.Id, e.Nome, e.Ativo;";
 
