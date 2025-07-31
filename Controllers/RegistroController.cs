@@ -1,9 +1,9 @@
+using HyperEfficient.Contracts.Services;
 using HyperEfficient.Dtos.Base;
 using HyperEfficient.Dtos.Equipamento;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Dtos.Registro;
 using HyperEfficient.Entities;
-using HyperEfficient.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +13,9 @@ namespace HyperEfficient.Controllers
     [Route("registros")]
     public class RegistroController : ControllerBase
     {
-        private readonly RegistroService _registroService;
+        private readonly IRegistroService _registroService;
 
-        public RegistroController(RegistroService registroService)
+        public RegistroController(IRegistroService registroService)
         {
             _registroService = registroService;
         }

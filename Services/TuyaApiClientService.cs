@@ -21,18 +21,20 @@ namespace HyperEfficient.Services
             await EnsureTokenAsync();
             var path = $"/v1.0/iot-03/devices/{deviceId}/status";
             var t = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
+            var nonce = Guid.NewGuid().ToString("N");
             var body = string.Empty;
             var contentHash = Sha256Hex(body);
             var stringToSign = $"GET\n{contentHash}\n\n{path}";
-            var signStr = _clientId + _accessToken + t + stringToSign;
-            var sign = ComputeHmac(signStr, _clientSecret);
 
+            var signStr = _clientId + _accessToken + t + nonce + stringToSign;
+            var sign = ComputeHmac(signStr, _clientSecret);
             using var req = new HttpRequestMessage(HttpMethod.Get, _baseUrl + path);
             req.Headers.Add("client_id", _clientId);
             req.Headers.Add("access_token", _accessToken!);
             req.Headers.Add("sign", sign);
             req.Headers.Add("sign_method", "HMAC-SHA256");
             req.Headers.Add("t", t);
+            req.Headers.Add("nonce", nonce);
 
             var resp = await _http.SendAsync(req);
             resp.EnsureSuccessStatusCode();
@@ -86,13 +88,20 @@ namespace HyperEfficient.Services
         private async Task GenerateTokenAsync()
         {
             var t = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
-            var sign = ComputeHmac(_clientId + t, _clientSecret);
+            var nonce = Guid.NewGuid().ToString("N");
+            var path = "/v1.0/token?grant_type=1";
+            var contentSHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+            var stringToSign = $"GET\n{contentSHA256}\n\n{path}";
 
-            using var req = new HttpRequestMessage(HttpMethod.Get, _baseUrl + "/v1.0/token?grant_type=1");
+            var signStr = _clientId + t + nonce + stringToSign;
+            var sign = ComputeHmac(signStr, _clientSecret);
+
+            using var req = new HttpRequestMessage(HttpMethod.Get, _baseUrl + path);
             req.Headers.Add("client_id", _clientId);
             req.Headers.Add("sign", sign);
             req.Headers.Add("sign_method", "HMAC-SHA256");
             req.Headers.Add("t", t);
+            req.Headers.Add("nonce", nonce);
 
             var resp = await _http.SendAsync(req);
             resp.EnsureSuccessStatusCode();
@@ -129,11 +138,18 @@ namespace HyperEfficient.Services
             await EnsureTokenAsync();
             var path = $"/v1.0/devices/{deviceId}/commands";
             var t = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
+            var nonce = Guid.NewGuid().ToString("N");
             var bodyObj = new { commands = new[] { new { code = "switch_1", value } } };
             var bodyJson = JsonSerializer.Serialize(bodyObj);
             var contentHash = Sha256Hex(bodyJson);
+
+            // Formato correto para stringToSign:
+            // HTTPMethod + "\n" + Content-SHA256 + "\n" + Headers + "\n" + Url
             var stringToSign = $"POST\n{contentHash}\n\n{path}";
-            var signStr = _clientId + _accessToken + t + stringToSign;
+
+            // Formato correto para a string a ser assinada (operações de serviço):
+            // client_id + access_token + t + nonce + stringToSign
+            var signStr = _clientId + _accessToken + t + nonce + stringToSign;
             var sign = ComputeHmac(signStr, _clientSecret);
 
             using var req = new HttpRequestMessage(HttpMethod.Post, _baseUrl + path);
@@ -143,6 +159,7 @@ namespace HyperEfficient.Services
             req.Headers.Add("sign", sign);
             req.Headers.Add("sign_method", "HMAC-SHA256");
             req.Headers.Add("t", t);
+            req.Headers.Add("nonce", nonce);
 
             var resp = await _http.SendAsync(req);
             resp.EnsureSuccessStatusCode();
