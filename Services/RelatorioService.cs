@@ -31,7 +31,8 @@ namespace HyperEfficient.Services
         }
 
         public async Task<RelatorioEquipamentoResponse> GetRelatorioEquipamento(int equipamentoId, DateTime dataInicio,
-            DateTime dataFim)
+            DateTime dataFim
+        )
         {
             return await _relatorioRepository.GetRelatorioEquipamento(equipamentoId, dataInicio, dataFim);
         }

@@ -2,6 +2,7 @@ using AutoMapper;
 using HyperEfficient.Contracts.Repositories;
 using HyperEfficient.Contracts.Services;
 using HyperEfficient.Dtos.Base;
+using HyperEfficient.Dtos.Equipamento;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Dtos.Registro;
 using HyperEfficient.Entities;
@@ -12,11 +13,14 @@ namespace HyperEfficient.Services
     public class RegistroService : ServiceBase<Registro>, IRegistroService
     {
         private readonly IEquipamentoRepository _equipamentoRepository;
+        private readonly ITuyaApiClientService _tuyaApiClientService;
 
-        public RegistroService(IRegistroRepository repository, IMapper map, IEquipamentoRepository equipamentoRepository
+        public RegistroService(IRegistroRepository repository, IMapper map,
+            IEquipamentoRepository equipamentoRepository, ITuyaApiClientService tuyaApiClientService
         ) : base(repository, map)
         {
             _equipamentoRepository = equipamentoRepository;
+            _tuyaApiClientService = tuyaApiClientService;
         }
 
         public async Task<MessageResponse> Insert(RegistroInsertDto dto)
@@ -72,38 +76,107 @@ namespace HyperEfficient.Services
 
         public async Task<MessageResponse> StartStopRegistro(int equipamentoId)
         {
-            try
+            if (await _equipamentoRepository.GetById(equipamentoId) is var equipamento && equipamento is not null &&
+                equipamento.DeviceIdIntegration is not null)
             {
+                var equipamentoStatus = await _tuyaApiClientService.GetStatusAsync(equipamento.DeviceIdIntegration);
+                if (equipamento.Ativo && equipamentoStatus.Ligado)
+                    await _tuyaApiClientService.DesligarAsync(equipamento.DeviceIdIntegration);
+
+                else if (!equipamento.Ativo && !equipamentoStatus.Ligado)
+                    await _tuyaApiClientService.LigarAsync(equipamento.DeviceIdIntegration);
+
+                else if (!equipamento.Ativo && equipamentoStatus.Ligado)
+                    return await StartRegistro(equipamentoId);
+            }
+
+            if (await ((IRegistroRepository)_repository).GetRegistroByEquipamentoId(equipamentoId) is var registro &&
+                registro is not null && registro.DataFinal is null)
+                return await StopRegistro(registro);
+
+            return await StartRegistro(equipamentoId);
+        }
+
+        public async Task<EquipamentoStatusDto> ObterConsumoAsync(int equipamentoId)
+        {
+            if (await _equipamentoRepository.GetById(equipamentoId) is var equipamento && equipamento is null)
+                throw new KeyNotFoundException("Equipamento não encontrado!");
+
+            if (equipamento.DeviceIdIntegration is null)
+            {
+                double totalKwhCalculado = 0;
+
                 if (await ((IRegistroRepository)_repository)
-                        .GetRegistroByEquipamentoId(equipamentoId) is var registro && registro is not null &&
-                    registro.DataFinal is null)
+                        .GetRegistroByEquipamentoId(equipamentoId) is var registro && registro is not null)
                 {
-                    registro.DataFinal = DateTime.UtcNow;
-                    if (await _repository.Update(registro) <= 0)
-                    {
-                        throw new KeyNotFoundException(
-                            $"Não foi possível finalizar o registro para o equipamento {equipamentoId}!");
-                    }
-
-                    return new MessageResponse { Message = "Registro finalizado!" };
+                    var tempoDecorrido = registro.TotalTempo is null
+                        ? (DateTime.Now - registro.DataInicial).TotalHours
+                        : registro.TotalTempo.Value;
+                    totalKwhCalculado = tempoDecorrido * equipamento.PotenciaKwh;
                 }
 
-                registro = new Registro
+                return new EquipamentoStatusDto
                 {
-                    EquipamentoId = equipamentoId, DataInicial = DateTime.UtcNow, DataFinal = null
+                    PotenciaKwh = equipamento.PotenciaKwh, TotalKwh = totalKwhCalculado, Ligado = equipamento.Ativo
                 };
-                if (await _repository.Insert(registro) <= 0)
-                {
-                    throw new KeyNotFoundException(
-                        $"Não foi possível iniciar um registro para o equipamento {equipamentoId}!");
-                }
+            }
 
-                return new MessageResponse { Message = "Registro iniciado!" };
-            }
-            finally
+            var equipamentoStatus = await _tuyaApiClientService.GetStatusAsync(equipamento.DeviceIdIntegration);
+            if (equipamentoStatus.Ligado && equipamentoStatus.PotenciaKwh < 5)
             {
-                _equipamentoRepository.ToggleEquipamentoStatus(equipamentoId);
+                await _tuyaApiClientService.DesligarAsync(equipamento.DeviceIdIntegration);
+                equipamentoStatus.Ligado = false;
             }
+
+            return equipamentoStatus;
+        }
+
+        public async Task LigarAsync(int equipamentoId)
+        {
+            if (await _equipamentoRepository.GetById(equipamentoId) is var equipamento && equipamento is null ||
+                equipamento.DeviceIdIntegration is null)
+                throw new KeyNotFoundException($"Não foi possível ligar o equipamento {equipamentoId}!");
+
+            await _tuyaApiClientService.LigarAsync(equipamento.DeviceIdIntegration);
+        }
+
+        public async Task DesligarAsync(int equipamentoId)
+        {
+            if (await _equipamentoRepository.GetById(equipamentoId) is var equipamento && equipamento is null ||
+                equipamento.DeviceIdIntegration is null)
+                throw new KeyNotFoundException($"Não foi possível desligar o equipamento {equipamentoId}!");
+
+            await _tuyaApiClientService.DesligarAsync(equipamento.DeviceIdIntegration);
+        }
+
+        private async Task<MessageResponse> StopRegistro(Registro registro)
+        {
+            registro.DataFinal = DateTime.UtcNow;
+            if (await _repository.Update(registro) <= 0)
+            {
+                throw new KeyNotFoundException(
+                    $"Não foi possível finalizar o registro para o equipamento {registro.EquipamentoId}!");
+            }
+
+            await _equipamentoRepository.InactiveEquipamento(registro.EquipamentoId);
+            return new MessageResponse { Message = "Registro finalizado!" };
+        }
+
+        private async Task<MessageResponse> StartRegistro(int equipamentoId)
+        {
+            var registro = new Registro
+            {
+                EquipamentoId = equipamentoId, DataInicial = DateTime.UtcNow, DataFinal = null
+            };
+            if (await _repository.Insert(registro) <= 0)
+            {
+                throw new KeyNotFoundException(
+                    $"Não foi possível iniciar um registro para o equipamento {equipamentoId}!");
+            }
+
+            await _equipamentoRepository.ActiveEquipamento(equipamentoId);
+
+            return new MessageResponse { Message = "Registro iniciado!" };
         }
     }
 }

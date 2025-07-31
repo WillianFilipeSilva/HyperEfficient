@@ -1,4 +1,5 @@
 using HyperEfficient.Dtos.Base;
+using HyperEfficient.Dtos.Equipamento;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Dtos.Registro;
 using HyperEfficient.Entities;
@@ -14,5 +15,8 @@ namespace HyperEfficient.Contracts.Services
         Task<GetPagedResponseBase<Registro>> GetPaged(int page, int pageSize);
         Task<Registro> GetById(int id);
         Task<MessageResponse> StartStopRegistro(int equipamentoId);
+        Task<EquipamentoStatusDto> ObterConsumoAsync(int equipamentoId);
+        Task LigarAsync(int equipamentoId);
+        Task DesligarAsync(int equipamentoId);
     }
 }

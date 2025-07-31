@@ -18,10 +18,11 @@ CREATE TABLE IF NOT EXISTS `Equipamento` (
   `Id`          INT NOT NULL AUTO_INCREMENT,
   `Nome`        VARCHAR(100) NOT NULL,
   `Descricao`   VARCHAR(300) NULL,
-  `Gastokwh`    DECIMAL(10,2) NOT NULL,
+  `PotenciaKwh`    DOUBLE NOT NULL,
   `CategoriaId` INT NOT NULL,
   `SetorId`     INT NOT NULL,
   `Ativo`       TINYINT NOT NULL DEFAULT 1,
+  `DeviceIdIntegration`   VARCHAR(25) NULL,
   PRIMARY KEY (`Id`),
   INDEX `idx_Equipamento_Categoria` (`CategoriaId`),
   INDEX `idx_Equipamento_Setor`     (`SetorId`),
@@ -38,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `Registro` (
   `DataInicial`   DATETIME NOT NULL,
   `DataFinal`     DATETIME NULL,
   `EquipamentoId` INT NOT NULL,
-  `TotalTempo`    DECIMAL(6,2) GENERATED ALWAYS AS (
+  `TotalTempo`    DOUBLE GENERATED ALWAYS AS (
     IF(DataFinal IS NOT NULL, TIMESTAMPDIFF(SECOND, DataInicial, DataFinal) / 3600, NULL)
   ) STORED,
   PRIMARY KEY (`Id`),

@@ -1,8 +1,9 @@
-using HyperEfficient.Contracts.Services;
 using HyperEfficient.Dtos.Base;
+using HyperEfficient.Dtos.Equipamento;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Dtos.Registro;
 using HyperEfficient.Entities;
+using HyperEfficient.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,9 +13,9 @@ namespace HyperEfficient.Controllers
     [Route("registros")]
     public class RegistroController : ControllerBase
     {
-        private readonly IRegistroService _registroService;
+        private readonly RegistroService _registroService;
 
-        public RegistroController(IRegistroService registroService)
+        public RegistroController(RegistroService registroService)
         {
             _registroService = registroService;
         }
@@ -68,6 +69,26 @@ namespace HyperEfficient.Controllers
         public async Task<ActionResult<MessageResponse>> StartStopRegistro(int equipamentoId)
         {
             return Ok(await _registroService.StartStopRegistro(equipamentoId));
+        }
+
+        [HttpGet("{equipamentoId}/status")]
+        public async Task<ActionResult<EquipamentoStatusDto>> Status(int equipamentoId)
+        {
+            return Ok(await _registroService.ObterConsumoAsync(equipamentoId));
+        }
+
+        [HttpPost("{equipamentoId}/ligar")]
+        public async Task<IActionResult> Ligar(int equipamentoId)
+        {
+            await _registroService.LigarAsync(equipamentoId);
+            return Ok(new { success = true });
+        }
+
+        [HttpPost("{equipamentoId}/desligar")]
+        public async Task<IActionResult> Desligar(int equipamentoId)
+        {
+            await _registroService.DesligarAsync(equipamentoId);
+            return Ok(new { success = true });
         }
     }
 }

@@ -15,6 +15,7 @@ namespace HyperEfficient.Contracts.Repositories
         Task<RelatorioSetorResponse> GetRelatorioSetor(int setorId, DateTime dataInicio, DateTime dataFim);
 
         Task<RelatorioEquipamentoResponse> GetRelatorioEquipamento(int equipamentoId, DateTime dataInicio,
-            DateTime dataFim);
+            DateTime dataFim
+        );
     }
 }

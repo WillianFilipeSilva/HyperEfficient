@@ -31,9 +31,9 @@ namespace HyperEfficient.Repositories
                     COALESCE(SUM(
                         CASE 
                             WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
-                                GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                                GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                             WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
-                                GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                                GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                             ELSE 0
                         END
                     ),0) AS GastoEnergeticoTotal
@@ -53,9 +53,9 @@ namespace HyperEfficient.Repositories
                        UPPER(DATE_FORMAT(r.DataInicial,'%b')) AS MesAbreviado,
                        SUM(CASE 
                            WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
-                               GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                            WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
-                               GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                            ELSE 0
                        END) AS ConsumoKwh,
                        SUM(CASE 
@@ -83,9 +83,9 @@ namespace HyperEfficient.Repositories
                     s.Nome AS Nome,
                     COALESCE(SUM(CASE 
                         WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
-                            GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                            GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                         WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
-                            GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                            GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                         ELSE 0
                     END),0) AS GastoTotal,
                     COALESCE(SUM(CASE 
@@ -115,9 +115,9 @@ namespace HyperEfficient.Repositories
                     c.Nome AS Nome,
                     COALESCE(SUM(CASE 
                         WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
-                            GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                            GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                         WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
-                            GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                            GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                         ELSE 0
                     END),0) AS GastoTotal,
                     COALESCE(SUM(CASE 
@@ -153,9 +153,9 @@ namespace HyperEfficient.Repositories
                        END)/3600,0) AS TempoUsoTotal,
                        COALESCE(SUM(CASE 
                            WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
-                               GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                            WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
-                               GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                            ELSE 0
                        END),0) AS GastoEnergeticoTotal
                 FROM Setor s
@@ -172,7 +172,8 @@ namespace HyperEfficient.Repositories
         }
 
         public async Task<RelatorioEquipamentoResponse> GetRelatorioEquipamento(int equipamentoId, DateTime dataInicio,
-            DateTime dataFim)
+            DateTime dataFim
+        )
         {
             const string sql = @"
                 SELECT e.Id AS EquipamentoId, e.Nome AS NomeEquipamento,
@@ -185,9 +186,9 @@ namespace HyperEfficient.Repositories
                        END)/3600,0) AS TempoUsoTotal,
                        COALESCE(SUM(CASE 
                            WHEN r.DataInicial < @dataInicio AND IFNULL(r.DataFinal, NOW()) > @dataInicio THEN
-                               GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, @dataInicio, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                            WHEN r.DataInicial >= @dataInicio AND r.DataInicial < @dataFim THEN
-                               GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.Gastokwh)
+                               GREATEST(0, (TIMESTAMPDIFF(SECOND, r.DataInicial, LEAST(IFNULL(r.DataFinal, NOW()), @dataFim))/3600)*e.PotenciaKwh)
                            ELSE 0
                        END),0) AS GastoEnergeticoTotal,
                        e.Ativo

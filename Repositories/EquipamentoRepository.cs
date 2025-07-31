@@ -24,12 +24,13 @@ namespace HyperEfficient.Repositories
 
             var sql = $@"
             SELECT ID AS {nameof(Equipamento.Id)},
-                   GASTOKWH AS {nameof(Equipamento.Gastokwh)},
+                   GASTOKWH AS {nameof(Equipamento.PotenciaKwh)},
                    SETORID AS {nameof(Equipamento.SetorId)},
                    CATEGORIAID AS {nameof(Equipamento.CategoriaId)},
                    DESCRICAO AS {nameof(Equipamento.Descricao)},
                    NOME AS {nameof(Equipamento.Nome)},
-                   ATIVO AS {nameof(Equipamento.Ativo)}
+                   ATIVO AS {nameof(Equipamento.Ativo)},
+                   DEVICEIDINTEGRATION AS {nameof(Equipamento.DeviceIdIntegration)}
             FROM EQUIPAMENTO
             LIMIT @pageSize OFFSET @offset";
 
@@ -48,8 +49,9 @@ namespace HyperEfficient.Repositories
                 e.Id         AS Id,
                 e.Nome       AS Nome,
                 e.Descricao  AS Descricao,
-                e.Gastokwh   AS Gastokwh,
+                e.PotenciaKwh   AS PotenciaKwh,
                 e.Ativo      AS Ativo,
+                e.DeviceIdIntegration AS DeviceIdIntegration,
                 c.Id         AS CategoriaId,
                 c.Id         AS Id,
                 c.Nome       AS Nome,
@@ -73,11 +75,21 @@ namespace HyperEfficient.Repositories
                 "CategoriaId,SetorId");
         }
 
-        public async Task<int> ToggleEquipamentoStatus(int id)
+        public async Task<int> InactiveEquipamento(int id)
         {
             var sql = @"
                 UPDATE Equipamento
-                SET Ativo = IF(Ativo = 1, 0, 1)
+                SET Ativo = 0
+                WHERE Id = @id;";
+
+            return await _connection.ExecuteAsync(sql, new { id });
+        }
+
+        public async Task<int> ActiveEquipamento(int id)
+        {
+            var sql = @"
+                UPDATE Equipamento
+                SET Ativo = 1
                 WHERE Id = @id;";
 
             return await _connection.ExecuteAsync(sql, new { id });

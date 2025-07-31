@@ -5,8 +5,8 @@ namespace HyperEfficient.Services.Base
 {
     public abstract class ServiceBase<T> where T : class
     {
-        protected readonly IRepositoryBase<T> _repository;
         protected readonly IMapper _map;
+        protected readonly IRepositoryBase<T> _repository;
 
         protected ServiceBase(IRepositoryBase<T> repository, IMapper map)
         {
