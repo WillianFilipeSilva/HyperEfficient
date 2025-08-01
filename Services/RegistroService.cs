@@ -129,12 +129,13 @@ namespace HyperEfficient.Services
             }
 
             var equipamentoStatus = await _tuyaApiClientService.GetStatusAsync(equipamento.DeviceIdIntegration);
-            if (equipamentoStatus.Ligado && equipamentoStatus.PotenciaKwh < 5)
+            if (equipamentoStatus.Ligado && equipamentoStatus.PotenciaKwh > 0)
             {
-                await DesligarAsync(equipamento);
-                equipamentoStatus.Ligado = false;
+                equipamento.PotenciaKwh = equipamentoStatus.PotenciaKwh;
+                equipamento.Ativo = equipamentoStatus.Ligado;
+                await _equipamentoRepository.Update(equipamento);
             }
-
+    
             return equipamentoStatus;
         }
 
