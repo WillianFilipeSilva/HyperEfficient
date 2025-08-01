@@ -6,7 +6,7 @@ namespace HyperEfficient.Services.BackgroundServices
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<TuyaUpdateService> _logger;
-        private readonly TimeSpan _interval = TimeSpan.FromHours(3);
+        private readonly TimeSpan _interval = TimeSpan.FromMinutes(1);
 
         public TuyaUpdateService(
             IServiceProvider serviceProvider,
