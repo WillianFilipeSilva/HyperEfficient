@@ -5,6 +5,7 @@ using HyperEfficient.Dtos.Base;
 using HyperEfficient.Dtos.Equipamento;
 using HyperEfficient.Dtos.MessageResponse;
 using HyperEfficient.Entities;
+using System.Diagnostics;
 
 namespace HyperEfficient.Services
 {
@@ -12,10 +13,15 @@ namespace HyperEfficient.Services
     {
         private readonly IEquipamentoRepository _equipamentoRepository;
         private readonly IMapper _map;
+        private readonly ITuyaApiClientService _tuyaApiClientService;
 
-        public EquipamentoService(IEquipamentoRepository equipamentoRepository, IMapper map)
+        public EquipamentoService(IEquipamentoRepository equipamentoRepository,
+            ITuyaApiClientService tuyaApiClientService,
+            IMapper map
+        )
         {
             _equipamentoRepository = equipamentoRepository;
+            _tuyaApiClientService = tuyaApiClientService;
             _map = map;
         }
 
@@ -76,6 +82,83 @@ namespace HyperEfficient.Services
                 TotalPages = totalPages,
                 TotalItems = totalItems
             };
+        }
+
+        public async Task AtualizarConsumoEquipamentos()
+        {
+            try
+            {
+                var equipamentos = await _equipamentoRepository.GetAll();
+                var equipamentosComIntegracao = equipamentos
+                    .Where(e => !string.IsNullOrEmpty(e.DeviceIdIntegration))
+                    .ToList();
+
+                foreach (var equipamento in equipamentosComIntegracao)
+                {
+                    await AtualizarConsumoEquipamento(equipamento);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro ao atualizar consumo dos equipamentos: {ex.Message}");
+            }
+        }
+
+        public async Task AtualizarConsumoEquipamento(int equipamentoId)
+        {
+            if (await _equipamentoRepository.GetById(equipamentoId) is var equipamento &&
+                (equipamento == null || string.IsNullOrEmpty(equipamento.DeviceIdIntegration)))
+                return;
+
+            var status = new EquipamentoStatusDto();
+            try
+            {
+                status = await _tuyaApiClientService.GetStatusAsync(equipamento.DeviceIdIntegration);
+
+                equipamento.PotenciaKwh = status.PotenciaKwh;
+                equipamento.Ativo = status.Ligado;
+
+                await _equipamentoRepository.Update(equipamento);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro ao atualizar consumo do equipamento {equipamentoId}: {ex.Message}");
+            }
+            finally
+            {
+                while (status.Ligado && status.PotenciaKwh <= 0)
+                {
+                    Thread.Sleep(10000);
+                    status = await _tuyaApiClientService.GetStatusAsync(equipamento.DeviceIdIntegration);
+                }
+
+                equipamento.PotenciaKwh = status.PotenciaKwh;
+                equipamento.Ativo = status.Ligado;
+
+                await _equipamentoRepository.Update(equipamento);
+            }
+        }
+
+        public async Task AtualizarConsumoEquipamento(Equipamento equipamento)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(equipamento.DeviceIdIntegration))
+                    return;
+
+                var status = await _tuyaApiClientService.GetStatusAsync(equipamento.DeviceIdIntegration);
+                if (status.Ligado && status.PotenciaKwh > 0)
+                    equipamento.PotenciaKwh = status.PotenciaKwh;
+
+                equipamento.Ativo = status.Ligado;
+
+                await _equipamentoRepository.Update(equipamento);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(
+                    $"Erro ao atualizar consumo do equipamento {equipamento.Nome} id: {equipamento.Id}: {ex.Message}");
+            }
         }
     }
 }

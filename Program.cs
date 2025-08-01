@@ -5,6 +5,7 @@ using HyperEfficient.Infrastructure.Connection;
 using HyperEfficient.Infrastructure.Extensions;
 using HyperEfficient.Infrastructure.Middleware;
 using HyperEfficient.Services;
+using HyperEfficient.Services.BackgroundServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -79,6 +80,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddSingleton<IConnection, Connection>();
 builder.Services.AddScoped<IAutentication, Autentication>();
 builder.Services.AddTransient<IRelatorioService, RelatorioService>();
+
+// Adiciona o serviço de background para atualização dos equipamentos Tuya
+builder.Services.AddHostedService<TuyaUpdateService>();
 
 // Database Initialization
 EnsureDatabaseAndTablesCreated(builder.Services.BuildServiceProvider().GetRequiredService<IConnection>(),

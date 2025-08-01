@@ -8,5 +8,6 @@ namespace HyperEfficient.Entities
         public DateTime? DataFinal { get; set; }
         public int EquipamentoId { get; set; }
         public double? TotalTempo { get; private set; }
+        public double TotalKwh { get; set; }
     }
 }

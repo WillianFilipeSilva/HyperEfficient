@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `Equipamento` (
   `Id`          INT NOT NULL AUTO_INCREMENT,
   `Nome`        VARCHAR(100) NOT NULL,
   `Descricao`   VARCHAR(300) NULL,
-  `PotenciaKwh`    DOUBLE NOT NULL,
+  `PotenciaKwh` DOUBLE NOT NULL DEFAULT 0,
   `CategoriaId` INT NOT NULL,
   `SetorId`     INT NOT NULL,
   `Ativo`       TINYINT NOT NULL DEFAULT 1,
@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `Registro` (
   `DataInicial`   DATETIME NOT NULL,
   `DataFinal`     DATETIME NULL,
   `EquipamentoId` INT NOT NULL,
+  `TotalKwh`      DOUBLE NOT NULL DEFAULT 0,
   `TotalTempo`    DOUBLE GENERATED ALWAYS AS (
     IF(DataFinal IS NOT NULL, TIMESTAMPDIFF(SECOND, DataInicial, DataFinal) / 3600, NULL)
   ) STORED,

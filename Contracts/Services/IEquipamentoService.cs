@@ -13,5 +13,8 @@ namespace HyperEfficient.Contracts.Services
         Task<EquipamentoGetAllResponse> GetAll();
         Task<GetPagedResponseBase<EquipamentoDto>> GetPaged(int page, int pageSize);
         Task<Equipamento> GetById(int id);
+        Task AtualizarConsumoEquipamentos();
+        Task AtualizarConsumoEquipamento(int equipamentoId);
+        Task AtualizarConsumoEquipamento(Equipamento equipamento);
     }
 }

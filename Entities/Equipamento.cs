@@ -4,7 +4,7 @@ namespace HyperEfficient.Entities
 {
     public class Equipamento : EntityBase
     {
-        public double PotenciaKwh { get; set; } = 0;
+        public double PotenciaKwh { get; set; }
         public int SetorId { get; set; }
         public int CategoriaId { get; set; }
         public string? Descricao { get; set; }

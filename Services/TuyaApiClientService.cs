@@ -40,7 +40,7 @@ namespace HyperEfficient.Services
             resp.EnsureSuccessStatusCode();
             using var stream = await resp.Content.ReadAsStreamAsync();
             using var doc = await JsonDocument.ParseAsync(stream);
-            var data = doc.RootElement.GetProperty("result"); // array
+            var data = doc.RootElement.GetProperty("result");
             double potencia = 0;
             double total = 0;
             var ligado = false;
