@@ -642,16 +642,14 @@ dotnet test --collect:"XPlat Code Coverage"
 
 ## 📞 Suporte
 
-- **Documentação**: [Wiki do Projeto](https://github.com/seu-usuario/HyperEfficient/wiki)
-- **Issues**: [GitHub Issues](https://github.com/seu-usuario/HyperEfficient/issues)
-- **Email**: backend@hyperefficient.com
+- **LinkTree**: https://linktr.ee/hyperefficient
 
 ---
 
 <div align="center">
 
-**Desenvolvido com ❤️ para o curso Entra21 - Turma C**
+**Desenvolvido com ❤️ para o curso Entra21 - Turma C#**
 
-[![Entra21](https://img.shields.io/badge/Entra21-Turma%20C-blue?style=for-the-badge)](https://entra21.com.br/)
+[(https://img.shields.io/badge/Linktree-green?style=for-the-badge)](https://linktr.ee/hyperefficient)
 
 </div>
