@@ -82,7 +82,7 @@ namespace HyperEfficient.Services
         public async Task<MessageResponse> StartStopRegistro(int equipamentoId)
         {
             if (await _equipamentoRepository.GetById(equipamentoId) is var equipamento && equipamento is not null &&
-                equipamento.DeviceIdIntegration is not null)
+                !string.IsNullOrEmpty(equipamento.DeviceIdIntegration))
             {
                 var equipamentoStatus = await _tuyaApiClientService.GetStatusAsync(equipamento.DeviceIdIntegration);
 
@@ -109,7 +109,7 @@ namespace HyperEfficient.Services
             if (await _equipamentoRepository.GetById(equipamentoId) is var equipamento && equipamento is null)
                 throw new KeyNotFoundException("Equipamento não encontrado!");
 
-            if (equipamento.DeviceIdIntegration is null)
+            if (string.IsNullOrEmpty(equipamento.DeviceIdIntegration))
             {
                 double totalKwhCalculado = 0;
 
@@ -135,14 +135,14 @@ namespace HyperEfficient.Services
                 equipamento.Ativo = equipamentoStatus.Ligado;
                 await _equipamentoRepository.Update(equipamento);
             }
-    
+
             return equipamentoStatus;
         }
 
         public async Task LigarAsync(int equipamentoId)
         {
             if (await _equipamentoRepository.GetById(equipamentoId) is var equipamento && equipamento is null ||
-                equipamento.DeviceIdIntegration is null)
+                string.IsNullOrEmpty(equipamento.DeviceIdIntegration))
                 throw new KeyNotFoundException($"Não foi possível ligar o equipamento {equipamentoId}!");
             try
             {
@@ -159,7 +159,7 @@ namespace HyperEfficient.Services
         public async Task DesligarAsync(int equipamentoId)
         {
             if (await _equipamentoRepository.GetById(equipamentoId) is var equipamento && equipamento is null ||
-                equipamento.DeviceIdIntegration is null)
+                string.IsNullOrEmpty(equipamento.DeviceIdIntegration))
                 throw new KeyNotFoundException($"Não foi possível desligar o equipamento {equipamentoId}!");
 
             try
@@ -176,7 +176,7 @@ namespace HyperEfficient.Services
         {
             try
             {
-                if (equipamento.DeviceIdIntegration is null)
+                if (string.IsNullOrEmpty(equipamento.DeviceIdIntegration))
                 {
                     throw new KeyNotFoundException(
                         $"Não foi possível ligar o equipamento {equipamento.Nome} id: {equipamento.Id}!");
@@ -194,7 +194,7 @@ namespace HyperEfficient.Services
 
         private async Task DesligarAsync(Equipamento equipamento)
         {
-            if (equipamento.DeviceIdIntegration is null)
+            if (string.IsNullOrEmpty(equipamento.DeviceIdIntegration))
             {
                 throw new KeyNotFoundException(
                     $"Não foi possível desligar o equipamento {equipamento.Nome} id: {equipamento.Id}!");
