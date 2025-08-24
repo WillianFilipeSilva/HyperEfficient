@@ -28,4 +28,14 @@
     <EditorConfigFiles Remove="C:\Users\Willian Filipe\Desktop\HyperEfficient-frontEnd\Backend\HyperEfficient\Dtos\Categoria\.editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="DbDemo.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="DbDemo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

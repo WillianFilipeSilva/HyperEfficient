@@ -88,6 +88,8 @@ builder.Services.AddHostedService<TuyaUpdateService>();
 EnsureDatabaseAndTablesCreated(builder.Services.BuildServiceProvider().GetRequiredService<IConnection>(),
     builder.Configuration);
 
+EnsureDemoDataExists(builder.Services.BuildServiceProvider().GetRequiredService<IConnection>(), builder.Configuration);
+
 // Extension Methods
 builder.Services.AddCamadaInfra().AddCamadaAplicacao();
 

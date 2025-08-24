@@ -48,5 +48,31 @@ namespace HyperEfficient.Infrastructure.DatabaseInitializer
                 con.Execute(eventSql);
             }
         }
+
+        public static void EnsureDemoDataExists(IConnection connection, IConfiguration configuration)
+        {
+            var connectionString = configuration.GetConnectionString("Default") ??
+                                   throw new ArgumentException("String de conexão não encontrada!");
+
+            using var con = new MySqlConnection(connectionString);
+            con.Open();
+
+            var EquipamentosCount = con.ExecuteScalar<int>("SELECT COUNT(*) FROM Equipamento");
+
+            if (EquipamentosCount == 0)
+            {
+                var demoScript = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "DbDemo.txt"));
+
+                foreach (var cmd in demoScript.Split(';'))
+                {
+                    var trimmed = cmd.Trim();
+
+                    if (!string.IsNullOrWhiteSpace(trimmed))
+                    {
+                        con.Execute(trimmed);
+                    }
+                }
+            }
+        }
     }
 }
